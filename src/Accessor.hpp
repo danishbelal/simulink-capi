@@ -110,7 +110,7 @@ constexpr std::string GetName(const CapiElement* const Element, const std::size_
     }
 }
 template <typename T>
-T* GetDataAddress(void* const* const AddrMap, std::size_t Index)
+constexpr T* GetDataAddress(void* const* const AddrMap, std::size_t Index)
 {
     return static_cast<T*>(AddrMap[Index]);
 }
