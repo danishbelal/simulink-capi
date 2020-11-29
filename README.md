@@ -1,5 +1,5 @@
 # Simulink C-API Library
-<i> Easy access to to States, Parameters and Signals</i>
+<i> Easy access to States, Parameters and Signals</i>
 
 <b> Work in Progress</b>
 
@@ -17,4 +17,4 @@ bp.get<double>("Controller/Discrete-Time Integrator/gainval") = 13.4;
 ```
 
 ## TODO
-- [ ] Write TODO List.
+- [ ] Check feasibility of `std::optional<>`
