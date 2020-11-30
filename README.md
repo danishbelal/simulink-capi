@@ -18,3 +18,8 @@ bp.get<double>("Controller/Discrete-Time Integrator/gainval") = 13.4;
 
 ## TODO
 - [ ] Check feasibility of `std::optional<>`
+
+## Ideas
+- change `bp.get<>()` to `bp.ref<>`
+- introduce `bp.ptr<>`
+- somehow allow non-scalars to be returned as `std::array<>`
