@@ -18,6 +18,7 @@ bp.get<double>("Controller/Discrete-Time Integrator/gainval") = 13.4;
 
 ## TODO
 - [ ] Check feasibility of `std::optional<>`
+- [ ] Add runtime type checking through introspection using [cleantype](https://github.com/pthom/cleantype)
 
 ## Ideas
 - change `bp.get<>()` to `bp.ref<>`
