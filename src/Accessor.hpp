@@ -133,6 +133,35 @@ constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI)
     }
 }
 
+template <typename CapiElement>
+constexpr CapiElement* GetRawData(const rtwCAPI_ModelMappingInfo& MMI)
+{
+    // This list needs to be advanced. CapiElement can also be a
+    //  - rtwCAPI_DataTypeMap
+    //  - rtwCAPI_DimensionMap
+    //  - rtwCAPI_FixPtMap
+    //  - rtwCAPI_ElementMap
+    //
+    // These are not used now and will be implemented later on (todo).
+    static_assert(isCapiElement<CapiElement>(), "Incompatible C-API Element!");
+    if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
+    {
+        return MMI.staticMap->Params.blockParameters;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_ModelParameters>)
+    {
+        return MMI.staticMap->Params.modelParameters;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_Signals>)
+    {
+        return MMI.staticMap->Signals.signals;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_States>)
+    {
+        return MMI.staticMap->States.states;
+    }
+}
+
 template <typename T>
 constexpr T* GetDataAddress(void* const* const AddrMap, std::size_t Index)
 {
