@@ -12,10 +12,8 @@ find_package(Threads REQUIRED)
 add_subdirectory(DummyModel/Cpp-Controller)
 
 set(LibDir "${CMAKE_CURRENT_SOURCE_DIR}/src")
-set(LibSrc "${LibDir}/Parameter.hpp"
-           "${LibDir}/Accessor.hpp"
-           "${LibDir}/split.hpp"
-           "${LibDir}/join.hpp")
+set(LibSrc "${LibDir}/CapiAccessor.hpp"
+           "${LibDir}/AccessorHelper.hpp")
 
 set(Sources "src/main.cpp" "src/icecream.hpp" "${LibSrc}")
 

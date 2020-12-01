@@ -20,67 +20,58 @@
 #include <exception>
 #include <string>
 
-#include "Accessor.hpp"
-#include "join.hpp"
-#include "split.hpp"
+#include "AccessorHelper.hpp"
 
 namespace db::simulink
 {
-class BlockParameters
+
+template <typename WrappedElement>
+class CapiAccessor;
+
+using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters>;
+using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters>;
+using States = CapiAccessor<rtwCAPI_States>;
+using Signals = CapiAccessor<rtwCAPI_Signals>;
+
+template <typename WrappedElement>
+class CapiAccessor
 {
     const std::size_t mNumParams;
-    const rtwCAPI_BlockParameters* const mBP;
+    const WrappedElement* const mWE;
     void* const* const mAddrMap;
 
 public:
-    using WrappedElement = rtwCAPI_BlockParameters;
-    BlockParameters(const rtwCAPI_ModelMappingInfo& MMI);
+    CapiAccessor(const rtwCAPI_ModelMappingInfo& MMI);
 
     // Returns a reference to the Parameter.
     template <typename T>
     inline T& get(const std::string Name);
-    template <typename T>
-    inline T& get(const std::string& BlockPath, const std::string& Name);
-}; // end of class BlockParameters
+}; // end of class CapiAccessor.
 
-BlockParameters::BlockParameters(const rtwCAPI_ModelMappingInfo& MMI)
+template <typename WrappedElement>
+CapiAccessor<WrappedElement>::CapiAccessor(const rtwCAPI_ModelMappingInfo& MMI)
     : mNumParams(db::simulink::GetCount<WrappedElement>(MMI))
-    , mBP(db::simulink::GetRawData<WrappedElement>(MMI))
+    , mWE(db::simulink::GetRawData<WrappedElement>(MMI))
     , mAddrMap(rtwCAPI_GetDataAddressMap(&MMI))
 {
 }
 
+template <typename WrappedElement>
 template <typename T>
-T& BlockParameters::get(const std::string PathAndName)
+T& CapiAccessor<WrappedElement>::get(const std::string PathAndName)
 {
-    auto PathElems = db::utils::split(PathAndName, '/');
-    if (PathElems.size() < 2)
-    {
-        throw std::runtime_error("Invalid path");
-    }
-    std::string Name = PathElems.back();
-    PathElems.pop_back();
-
-    auto Path = db::utils::join(PathElems, '/');
-
-    return get<T>(Path, Name);
-}
-
-template <typename T>
-T& BlockParameters::get(const std::string& BlockPath, const std::string& Name)
-{
-    // Search for the Parameter given its Block Path and Name.
+    // Search for the Parameter given its and Name.
     for (std::size_t i { 0 }; i < mNumParams; ++i)
     {
-        std::string CurrentParameter { db::simulink::GetName(mBP, i) };
-        std::string CurrentPath { db::simulink::GetBlockPath(mBP, i) };
-        if ((CurrentParameter == Name) && (CurrentPath == BlockPath))
+        std::string CurrentParameter { db::simulink::GetName(mWE, i) };
+        if (CurrentParameter == PathAndName)
         {
-            const std::size_t AddrIndex { db::simulink::GetAddrIdx(mBP, i) };
+            const std::size_t AddrIndex { db::simulink::GetAddrIdx(mWE, i) };
             return *db::simulink::GetDataAddress<T>(mAddrMap, AddrIndex);
         }
     }
     throw std::runtime_error("Couldn't find Parameter");
 }
+
 }
 #endif
