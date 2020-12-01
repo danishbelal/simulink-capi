@@ -13,7 +13,8 @@ add_subdirectory(DummyModel/Cpp-Controller)
 
 set(LibDir "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(LibSrc "${LibDir}/CapiAccessor.hpp"
-           "${LibDir}/AccessorHelper.hpp")
+           "${LibDir}/AccessorHelper.hpp"
+           "${LibDir}/cleantype.hpp")
 
 set(Sources "src/main.cpp" "src/icecream.hpp" "${LibSrc}")
 

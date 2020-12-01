@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#define ENABLE_RUNTIME_TYPE_CHECKING
 #include "CapiAccessor.hpp"
 #include "Controller.h"
 #include "icecream.hpp"
@@ -36,6 +37,8 @@ int main()
     sigs.get<double>("Controller/Sum/") = 1.2;
     states.get<double>("Controller/Unit Delay/DSTATE") = 5.3;
 
+    // trigger type mismatch
+    bp.get<float>("Controller/Discrete-Time Integrator/gainval") = 13.4;
 
     // Manuell gegenchecken.
     void* const* const AddrMap = rtwCAPI_GetDataAddressMap(&MMI);
