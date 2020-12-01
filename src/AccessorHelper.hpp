@@ -31,8 +31,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef _ACCESSOR_HPP_
-#define _ACCESSOR_HPP_
+#ifndef _ACCESSOR_HELPER_HPP_
+#define _ACCESSOR_HELPER_HPP_
 
 #include "rtw_capi.h"
 #include "rtw_modelmap.h"
@@ -66,6 +66,7 @@ constexpr std::size_t GetAddrIdx(const CapiElement* const BP, const std::size_t 
     static_assert(isCapiElement<CapiElement>(), "Incompatible C-API Element!");
     return BP[Index].addrMapIndex;
 }
+
 template <typename CapiElement>
 constexpr std::size_t GetDataTypeIdx(const CapiElement* const Element, const std::size_t Index) noexcept
 {
@@ -90,16 +91,20 @@ constexpr std::string GetBlockPath(const CapiElement* const Element, const std::
 }
 
 template <typename CapiElement>
-constexpr std::string GetName(const CapiElement* const Element, const std::size_t Index) noexcept
+constexpr std::string GetName(const CapiElement* const Element, const std::size_t Index)
 {
     static_assert(isCapiElement<CapiElement>(), "Incompatible C-API Element!");
     if constexpr (std::is_same_v<CapiElement, rtwCAPI_States>)
     {
-        return Element[Index].stateName;
+        return std::string(Element[Index].blockPath)
+            .append("/")
+            .append(Element[Index].stateName);
     }
     else if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
     {
-        return Element[Index].paramName;
+        return std::string(Element[Index].blockPath)
+            .append("/")
+            .append(Element[Index].paramName);
     }
     else if constexpr (std::is_same_v<CapiElement, rtwCAPI_ModelParameters>)
     {
@@ -107,12 +112,14 @@ constexpr std::string GetName(const CapiElement* const Element, const std::size_
     }
     else if constexpr (std::is_same_v<CapiElement, rtwCAPI_Signals>)
     {
-        return Element[Index].signalName;
+        return std::string(Element[Index].blockPath)
+            .append("/")
+            .append(Element[Index].signalName);
     }
 }
 
 template <typename CapiElement>
-constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI)
+constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI) noexcept
 {
     static_assert(isCapiElement<CapiElement>(), "Incompatible C-API Element!");
     if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
@@ -134,7 +141,7 @@ constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI)
 }
 
 template <typename CapiElement>
-constexpr CapiElement* GetRawData(const rtwCAPI_ModelMappingInfo& MMI)
+constexpr const CapiElement* const GetRawData(const rtwCAPI_ModelMappingInfo& MMI) noexcept
 {
     // This list needs to be advanced. CapiElement can also be a
     //  - rtwCAPI_DataTypeMap
@@ -163,7 +170,7 @@ constexpr CapiElement* GetRawData(const rtwCAPI_ModelMappingInfo& MMI)
 }
 
 template <typename T>
-constexpr T* GetDataAddress(void* const* const AddrMap, std::size_t Index)
+constexpr T* GetDataAddress(void* const* const AddrMap, std::size_t Index) noexcept
 {
     return static_cast<T*>(AddrMap[Index]);
 }
