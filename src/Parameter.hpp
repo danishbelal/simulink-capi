@@ -50,6 +50,7 @@ class BlockParameters
     void* const* const mAddrMap;
 
 public:
+    using WrappedElement = rtwCAPI_BlockParameters;
     BlockParameters(const rtwCAPI_ModelMappingInfo& MMI);
 
     // Returns a reference to the Parameter.
@@ -60,7 +61,7 @@ public:
 }; // end of class BlockParameters
 
 BlockParameters::BlockParameters(const rtwCAPI_ModelMappingInfo& MMI)
-    : mNumParams(rtwCAPI_GetNumBlockParameters(&MMI))
+    : mNumParams(db::simulink::GetCount<WrappedElement>(MMI))
     , mBP(rtwCAPI_GetBlockParameters(&MMI))
     , mAddrMap(rtwCAPI_GetDataAddressMap(&MMI))
 {
