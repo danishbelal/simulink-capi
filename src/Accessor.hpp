@@ -18,6 +18,7 @@
 #define _ACCESSOR_HPP_
 
 #include "rtw_capi.h"
+#include "rtw_modelmap.h"
 #include <cstddef>
 #include <string>
 #include <type_traits>
@@ -92,6 +93,29 @@ constexpr std::string GetName(const CapiElement* const Element, const std::size_
         return Element[Index].signalName;
     }
 }
+
+template <typename CapiElement>
+constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI)
+{
+    static_assert(isCapiElement<CapiElement>(), "Incompatible C-API Element!");
+    if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
+    {
+        return MMI.staticMap->Params.numBlockParameters;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_ModelParameters>)
+    {
+        return MMI.staticMap->Params.numModelParameters;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_Signals>)
+    {
+        return MMI.staticMap->Signals.numSignals;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_States>)
+    {
+        return MMI.staticMap->States.numStates;
+    }
+}
+
 template <typename T>
 constexpr T* GetDataAddress(void* const* const AddrMap, std::size_t Index)
 {
