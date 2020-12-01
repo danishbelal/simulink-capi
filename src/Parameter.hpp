@@ -45,7 +45,7 @@ public:
 
 BlockParameters::BlockParameters(const rtwCAPI_ModelMappingInfo& MMI)
     : mNumParams(db::simulink::GetCount<WrappedElement>(MMI))
-    , mBP(rtwCAPI_GetBlockParameters(&MMI))
+    , mBP(db::simulink::GetRawData<WrappedElement>(MMI))
     , mAddrMap(rtwCAPI_GetDataAddressMap(&MMI))
 {
 }
