@@ -28,8 +28,24 @@ namespace db::simulink
 template <typename CapiElement>
 constexpr bool isCapiElement()
 {
-    constexpr bool ValidCapiElement = std::is_same_v<CapiElement, rtwCAPI_BlockParameters> || std::is_same_v<CapiElement, rtwCAPI_ModelParameters> || std::is_same_v<CapiElement, rtwCAPI_Signals> || std::is_same_v<CapiElement, rtwCAPI_States>;
+    constexpr bool ValidCapiElement                             //
+        = std::is_same_v<CapiElement, rtwCAPI_BlockParameters>  //
+        || std::is_same_v<CapiElement, rtwCAPI_ModelParameters> //
+        || std::is_same_v<CapiElement, rtwCAPI_Signals>         //
+        || std::is_same_v<CapiElement, rtwCAPI_States>;         //
     return ValidCapiElement;
+}
+
+template <typename CapiElement>
+constexpr bool isCapiMap()
+{
+    constexpr bool ValidCapiMap                                //
+        = std::is_same_v<CapiElement, rtwCAPI_DataTypeMap>     //
+        || std::is_same_v<CapiElement, rtwCAPI_DimensionMap>   //
+        || std::is_same_v<CapiElement, rtwCAPI_FixPtMap>       //
+        || std::is_same_v<CapiElement, rtwCAPI_ElementMap>     //
+        || std::is_same_v<CapiElement, rtwCAPI_SampleTimeMap>; //
+    return ValidCapiMap;
 }
 
 // Some accessor macros are redundant and make code reusage
@@ -126,14 +142,8 @@ constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI) noexcept
 template <typename CapiElement>
 constexpr const CapiElement* const GetRawData(const rtwCAPI_ModelMappingInfo& MMI) noexcept
 {
-    // This list needs to be advanced. CapiElement can also be a
-    //  - rtwCAPI_DataTypeMap
-    //  - rtwCAPI_DimensionMap
-    //  - rtwCAPI_FixPtMap
-    //  - rtwCAPI_ElementMap
-    //
-    // These are not used now and will be implemented later on (todo).
-    static_assert(isCapiElement<CapiElement>(), "Incompatible C-API Element!");
+    constexpr bool ValidElement = isCapiElement<CapiElement>() || isCapiMap<CapiElement>();
+    static_assert(ValidElement, "Incompatible C-API Element!");
     if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
     {
         return MMI.staticMap->Params.blockParameters;
@@ -149,6 +159,26 @@ constexpr const CapiElement* const GetRawData(const rtwCAPI_ModelMappingInfo& MM
     else if constexpr (std::is_same_v<CapiElement, rtwCAPI_States>)
     {
         return MMI.staticMap->States.states;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_DataTypeMap>)
+    {
+        return MMI.staticMap->Maps.dataTypeMap;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_DimensionMap>)
+    {
+        return MMI.staticMap->Maps.dimensionMap;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_FixPtMap>)
+    {
+        return MMI.staticMap->Maps.fixPtMap;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_ElementMap>)
+    {
+        return MMI.staticMap->Maps.elementMap;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_SampleTimeMap>)
+    {
+        return MMI.staticMap->Maps.sampleTimeMap;
     }
 }
 
