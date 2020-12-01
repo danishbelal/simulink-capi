@@ -39,6 +39,12 @@
 
 #include "AccessorHelper.hpp"
 
+#ifdef ENABLE_RUNTIME_TYPE_CHECKING
+#include "cleantype.hpp"
+#include <sstream>
+#include <type_traits>
+#endif
+
 namespace db::simulink
 {
 
@@ -56,6 +62,7 @@ class CapiAccessor
     const std::size_t mNumParams;
     const WrappedElement* const mWE;
     void* const* const mAddrMap;
+    const rtwCAPI_ModelMappingInfo& mMMI;
 
 public:
     CapiAccessor(const rtwCAPI_ModelMappingInfo& MMI);
@@ -70,6 +77,7 @@ CapiAccessor<WrappedElement>::CapiAccessor(const rtwCAPI_ModelMappingInfo& MMI)
     : mNumParams(db::simulink::GetCount<WrappedElement>(MMI))
     , mWE(db::simulink::GetRawData<WrappedElement>(MMI))
     , mAddrMap(rtwCAPI_GetDataAddressMap(&MMI))
+    , mMMI(MMI)
 {
 }
 
@@ -83,6 +91,22 @@ T& CapiAccessor<WrappedElement>::get(const std::string PathAndName)
         std::string CurrentParameter { db::simulink::GetName(mWE, i) };
         if (CurrentParameter == PathAndName)
         {
+#ifdef ENABLE_RUNTIME_TYPE_CHECKING
+            std::size_t DataTypeIndex { db::simulink::GetDataTypeIdx(mWE, i) };
+            auto DataTypeMap { db::simulink::GetRawData<rtwCAPI_DataTypeMap>(mMMI) };
+            std::string ActualType { DataTypeMap[DataTypeIndex].cDataName };
+            std::string DeducedType { cleantype::clean<std::remove_reference_t<T>>() };
+
+            if (ActualType != DeducedType)
+            {
+                std::ostringstream os;
+                os << "Type mismatch "
+                   << "(" << ActualType
+                   << " vs. " << DeducedType << ")\n";
+                throw std::runtime_error(os.str());
+            }
+
+#endif
             const std::size_t AddrIndex { db::simulink::GetAddrIdx(mWE, i) };
             return *db::simulink::GetDataAddress<T>(mAddrMap, AddrIndex);
         }
