@@ -26,7 +26,7 @@
 namespace db::simulink
 {
 template <typename CapiElement>
-constexpr bool isCapiElement()
+constexpr bool is_capi_element()
 {
     constexpr bool ValidCapiElement                             //
         = std::is_same_v<CapiElement, rtwCAPI_BlockParameters>  //
@@ -37,7 +37,7 @@ constexpr bool isCapiElement()
 }
 
 template <typename CapiElement>
-constexpr bool isCapiMap()
+constexpr bool is_capi_map()
 {
     constexpr bool ValidCapiMap                                //
         = std::is_same_v<CapiElement, rtwCAPI_DataTypeMap>     //
@@ -72,21 +72,21 @@ constexpr bool has_blockpath()
 template <typename CapiElement>
 constexpr std::size_t GetAddrIdx(const CapiElement* const BP, const std::size_t Index) noexcept
 {
-    static_assert(isCapiElement<CapiElement>(), "Incompatible C-API Element!");
+    static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
     return BP[Index].addrMapIndex;
 }
 
 template <typename CapiElement>
 constexpr std::size_t GetDataTypeIdx(const CapiElement* const Element, const std::size_t Index) noexcept
 {
-    static_assert(isCapiElement<CapiElement>(), "Incompatible C-API Element!");
+    static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
     return Element[Index].dataTypeIndex;
 }
 
 template <typename CapiElement>
 constexpr std::size_t GetDimensionIdx(const CapiElement* const Element, const std::size_t Index) noexcept
 {
-    static_assert(isCapiElement<CapiElement>(), "Incompatible C-API Element!");
+    static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
     return Element[Index].dimIndex;
 }
 
@@ -101,7 +101,7 @@ constexpr std::string GetBlockPath(const CapiElement* const Element, const std::
 template <typename CapiElement>
 constexpr std::string GetName(const CapiElement* const Element, const std::size_t Index)
 {
-    static_assert(isCapiElement<CapiElement>(), "Incompatible C-API Element!");
+    static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
     if constexpr (std::is_same_v<CapiElement, rtwCAPI_States>)
     {
         return std::string(Element[Index].blockPath)
@@ -129,7 +129,7 @@ constexpr std::string GetName(const CapiElement* const Element, const std::size_
 template <typename CapiElement>
 constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI) noexcept
 {
-    static_assert(isCapiElement<CapiElement>(), "Incompatible C-API Element!");
+    static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
     if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
     {
         return MMI.staticMap->Params.numBlockParameters;
@@ -151,7 +151,7 @@ constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI) noexcept
 template <typename CapiElement>
 constexpr const CapiElement* const GetRawData(const rtwCAPI_ModelMappingInfo& MMI) noexcept
 {
-    constexpr bool ValidElement = isCapiElement<CapiElement>() || isCapiMap<CapiElement>();
+    constexpr bool ValidElement = is_capi_element<CapiElement>() || is_capi_map<CapiElement>();
     static_assert(ValidElement, "Incompatible C-API Element!");
     if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
     {
