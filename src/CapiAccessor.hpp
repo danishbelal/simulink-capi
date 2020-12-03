@@ -53,6 +53,9 @@ public:
     // Returns a reference to the Parameter.
     template <typename T>
     inline T& get(const std::string Name);
+    // Returns a pointer to the parameter.
+    template <typename T>
+    inline T* const ptr(const std::string& Name);
 }; // end of class CapiAccessor.
 
 template <typename WrappedElement>
@@ -67,6 +70,13 @@ CapiAccessor<WrappedElement>::CapiAccessor(const rtwCAPI_ModelMappingInfo& MMI)
 template <typename WrappedElement>
 template <typename T>
 T& CapiAccessor<WrappedElement>::get(const std::string PathAndName)
+{
+    return *ptr<T>(PathAndName);
+}
+
+template <typename WrappedElement>
+template <typename T>
+T* const CapiAccessor<WrappedElement>::ptr(const std::string& PathAndName)
 {
     // Search for the Parameter given its and Name.
     for (std::size_t i { 0 }; i < mNumParams; ++i)
@@ -91,7 +101,7 @@ T& CapiAccessor<WrappedElement>::get(const std::string PathAndName)
 
 #endif
             const std::size_t AddrIndex { db::simulink::GetAddrIdx(mWE, i) };
-            return *db::simulink::GetDataAddress<T>(mAddrMap, AddrIndex);
+            return db::simulink::GetDataAddress<T>(mAddrMap, AddrIndex);
         }
     }
     throw std::runtime_error("Couldn't find Parameter");
