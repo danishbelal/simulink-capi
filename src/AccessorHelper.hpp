@@ -65,6 +65,16 @@ constexpr bool isCapiMap()
     return ValidCapiMap;
 }
 
+template <typename CapiElement>
+constexpr bool has_blockpath()
+{
+    constexpr bool HasBlockPath                                //
+        = std::is_same_v<CapiElement, rtwCAPI_BlockParameters> //
+        || std::is_same_v<CapiElement, rtwCAPI_Signals>        //
+        || std::is_same_v<CapiElement, rtwCAPI_States>;
+    return HasBlockPath;
+}
+
 // Some accessor macros are redundant and make code reusage
 // unneccesary complicated.
 //
@@ -100,8 +110,7 @@ constexpr std::size_t GetDimensionIdx(const CapiElement* const Element, const st
 template <typename CapiElement>
 constexpr std::string GetBlockPath(const CapiElement* const Element, const std::size_t Index) noexcept
 {
-    constexpr bool BlockPathAvailable
-        = std::is_same_v<CapiElement, rtwCAPI_BlockParameters> || std::is_same_v<CapiElement, rtwCAPI_Signals> || std::is_same_v<CapiElement, rtwCAPI_States>;
+    constexpr bool BlockPathAvailable = has_blockpath<CapiElement>();
     static_assert(BlockPathAvailable, "Block Path only available on BlockParameters, Signals and States");
     return Element[Index].blockPath;
 }
