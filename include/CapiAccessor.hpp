@@ -87,7 +87,7 @@ T* const CapiAccessor<WrappedElement>::ptr(const std::string& PathAndName)
 #ifdef ENABLE_RUNTIME_TYPE_CHECKING
             std::size_t DataTypeIndex { db::simulink::GetDataTypeIdx(mWE, i) };
             auto DataTypeMap { db::simulink::GetRawData<rtwCAPI_DataTypeMap>(mMMI) };
-            std::string ActualType { DataTypeMap[DataTypeIndex].cDataName };
+            std::string ActualType { db::simulink::GetTypeName<T>(DataTypeMap, DataTypeIndex) };
             std::string DeducedType { cleantype::clean<std::remove_reference_t<T>>() };
 
             if (ActualType != DeducedType)
