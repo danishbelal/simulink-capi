@@ -18,13 +18,13 @@
 #define _PARAMETER_HPP_
 
 #include <exception>
+#include <sstream>
 #include <string>
 
 #include "AccessorHelper.hpp"
 
 #ifdef ENABLE_RUNTIME_TYPE_CHECKING
 #include "cleantype.hpp"
-#include <sstream>
 #include <type_traits>
 #endif
 
@@ -104,7 +104,10 @@ T* const CapiAccessor<WrappedElement>::ptr(const std::string& PathAndName)
             return db::simulink::GetDataAddress<T>(mAddrMap, AddrIndex);
         }
     }
-    throw std::runtime_error("Couldn't find Parameter");
+    std::ostringstream os;
+    os << "Couldn't find Parameter '"
+       << PathAndName << "'";
+    throw std::runtime_error(os.str());
 }
 
 }
