@@ -3,6 +3,6 @@
 #
 # Damit kann die präfixierte Datei direkt in C++ Quellen
 # kopiert werden.
-with open("license-header", "r") as input, open("LICENSE-commented", "w") as output:
-    for line in input:
-        output.write("// " + line)
+with open("license-header", "r") as in_file, open("LICENSE-commented", "w") as out_file:
+    for line in in_file:
+        out_file.write("// " + line)
