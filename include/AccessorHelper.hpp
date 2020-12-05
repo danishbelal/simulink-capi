@@ -209,6 +209,19 @@ constexpr const CapiElement* const GetRawData(const rtwCAPI_ModelMappingInfo& MM
 }
 
 template <typename T>
+constexpr std::string GetTypeName(const rtwCAPI_DataTypeMap* const Map, const std::size_t Index)
+{
+    if constexpr (std::is_class_v<T>)
+    {
+        return Map[Index].mwDataName;
+    }
+    else
+    {
+        return Map[Index].cDataName;
+    }
+}
+
+template <typename T>
 constexpr T* GetDataAddress(void* const* const AddrMap, std::size_t Index) noexcept
 {
     return static_cast<T*>(AddrMap[Index]);
