@@ -8,7 +8,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 include(FetchContent)
 
-add_subdirectory(DummyModel/Cpp-Controller)
+# google test
+FetchContent_Declare(gtest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG release-1.10.0)
+FetchContent_MakeAvailable(gtest)
 
 add_subdirectory(DummyModel/DummyModel2/Controller)
 
@@ -20,8 +24,11 @@ set(ExtDir "${CMAKE_CURRENT_SOURCE_DIR}/external")
 set(ExtSources "${ExtDir}/cleantype.hpp"
                "${ExtDir}/icecream.hpp")
 
-set(Sources "src/main.cpp" "${LibSrc}" "${ExtSources}")
+set(TestDir "${CMAKE_CURRENT_SOURCE_DIR}/test")
+set(TestSources "${TestDir}/TestCapiAccessor.cpp")
 
-add_executable(Demo "${Sources}")
-target_include_directories(Demo PUBLIC "${LibDir}" "${ExtDir}")
-target_link_libraries(Demo PUBLIC Controller)
+set(Sources "${LibSrc}" "${ExtSources}" "${TestSources}")
+
+add_executable(Tests "${Sources}")
+target_include_directories(Tests PUBLIC "${LibDir}" "${ExtDir}")
+target_link_libraries(Tests PUBLIC gtest_main Controller)
