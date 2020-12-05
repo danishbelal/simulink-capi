@@ -1,4 +1,7 @@
 # Simulink C-API Library
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e42b17ddc7ea4b86a2d1e9a4af8bcc77)](https://app.codacy.com/gh/danishbelal/simulink-capi?utm_source=github.com&utm_medium=referral&utm_content=danishbelal/simulink-capi&utm_campaign=Badge_Grade)
+
 <i> Easy access to States, Parameters and Signals</i>
 
 <b> Work in Progress</b>
