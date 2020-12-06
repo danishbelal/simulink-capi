@@ -130,6 +130,15 @@ TEST(CapiAccessor, BlockParameterDirect)
     EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
 }
 
+TEST(CapiAccessor, InvalidBlockParameter)
+{
+    ResetModel();
+
+    auto& MMI { ModelStruct.DataMapInfo.mmi };
+    db::simulink::BlockParameters bp { MMI };
+    EXPECT_THROW(auto& ref { bp.get<double>("does/not/exist") }, std::runtime_error);
+}
+
 TEST(CapiAccessor, ModelParameterGet)
 {
     using WrappedElement = rtwCAPI_ModelParameters;
@@ -171,4 +180,13 @@ TEST(CapiAccessor, ModelParameterDirect)
 
     EXPECT_DOUBLE_EQ(SetValue.Gain, Actual->Gain) << "Parameter could not be set";
     EXPECT_DOUBLE_EQ(SetValue.SomeOtherMember, Actual->SomeOtherMember) << "Parameter could not be set";
+}
+
+TEST(CapiAccessor, InvalidModelParameter)
+{
+    ResetModel();
+
+    auto& MMI { ModelStruct.DataMapInfo.mmi };
+    db::simulink::ModelParameters mp { MMI };
+    EXPECT_THROW(auto& ref { mp.get<double>("does-not-exist") }, std::runtime_error);
 }
