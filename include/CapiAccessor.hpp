@@ -52,7 +52,7 @@ public:
 
     // Returns a reference to the Parameter.
     template <typename T>
-    inline T& get(const std::string Name);
+    inline T& get(const std::string& Name);
     // Returns a pointer to the parameter.
     template <typename T>
     inline T* const ptr(const std::string& Name);
@@ -69,7 +69,7 @@ CapiAccessor<WrappedElement>::CapiAccessor(const rtwCAPI_ModelMappingInfo& MMI)
 
 template <typename WrappedElement>
 template <typename T>
-T& CapiAccessor<WrappedElement>::get(const std::string PathAndName)
+T& CapiAccessor<WrappedElement>::get(const std::string& PathAndName)
 {
     return *ptr<T>(PathAndName);
 }

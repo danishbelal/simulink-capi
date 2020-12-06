@@ -67,7 +67,7 @@ static void DestroyModel()
 //
 // This function outsources the task of searching for the Address Index.
 template <typename CapiElement>
-static std::size_t GetAddrMapIndex(const rtwCAPI_ModelMappingInfo& MMI, std::string PathAndName)
+static std::size_t GetAddrMapIndex(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
 {
     std::optional<std::size_t> AddrMapIdx;
     auto CapiInstance { db::simulink::GetRawData<CapiElement>(MMI) };
