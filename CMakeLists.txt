@@ -7,43 +7,36 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 option(SLCAPI_RUN_STATIC_ANALYSIS "Run static analysis tools" OFF)
+option(SLCAPI_RUNTIME_TYPE_CHECKING "Enable runtime type checking" ON)
+option(SLCAPI_COMPILE_TESTS "Compile the tests incl. the model" ON)
 
-include(FetchContent)
-include(GoogleTest)
-
-enable_testing()
-
-# google test
-FetchContent_Declare(gtest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG release-1.10.0)
-FetchContent_MakeAvailable(gtest)
-
-add_subdirectory(DummyModel/DummyModel2/Controller)
-
+# Create the Simulink- C-API Library target.
+# This is what you want to link against in your
+# application.
 set(LibDir "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(LibSrc "${LibDir}/CapiAccessor.hpp"
            "${LibDir}/AccessorHelper.hpp")
+set(ExtDir "${CMAKE_SOURCE_DIR}/external")
 
-set(ExtDir "${CMAKE_CURRENT_SOURCE_DIR}/external")
-set(ExtSources "${ExtDir}/cleantype.hpp"
-               "${ExtDir}/icecream.hpp")
+add_library(SimulinkCAPI INTERFACE)
+target_sources(SimulinkCAPI INTERFACE "${LibSrc}")
+target_include_directories(SimulinkCAPI INTERFACE "${LibDir}" "${ExtDir}")
 
-set(TestDir "${CMAKE_CURRENT_SOURCE_DIR}/test")
-set(TestSources "${TestDir}/TestCapiAccessor.cpp")
+# Add the tests to the build.
+if(SLCAPI_COMPILE_TESTS)
+  include(FetchContent)
+  include(GoogleTest)
 
-set(Sources "${LibSrc}" "${ExtSources}" "${TestSources}")
+  # google test
+  FetchContent_Declare(gtest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG release-1.10.0)
+  FetchContent_GetProperties(gtest)
+  if(NOT gtest_POPULATED)
+    FetchContent_Populate(gtest)
+    add_subdirectory("${gtest_SOURCE_DIR}" "${gtest_BINARY_DIR}")
+  endif()
 
-if(SLCAPI_RUN_STATIC_ANALYSIS)
-  # This does not with absolute paths...
-  set(CMAKE_CXX_CPPCHECK "cppcheck"
-                        "--enable=all"
-                        "--suppress=*:../external/cleantype.hpp"
-                        "--suppress=*:../external/icecream.hpp")
+  enable_testing()
+  add_subdirectory(test)
 endif()
-
-add_executable(Tests "${Sources}")
-target_include_directories(Tests PUBLIC "${LibDir}" "${ExtDir}")
-target_link_libraries(Tests PUBLIC gtest_main Controller)
-
-gtest_discover_tests(Tests)
