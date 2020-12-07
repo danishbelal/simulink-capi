@@ -16,15 +16,25 @@ option(SLCAPI_COMPILE_TESTS "Compile the tests incl. the model" ON)
 set(LibDir "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(LibSrc "${LibDir}/CapiAccessor.hpp"
            "${LibDir}/AccessorHelper.hpp")
-set(ExtDir "${CMAKE_SOURCE_DIR}/external")
+
+include(FetchContent)
+# fetch cleantype
+FetchContent_Declare(cleantype
+    GIT_REPOSITORY https://github.com/pthom/cleantype.git)
+FetchContent_GetProperties(cleantype)
+if(NOT cleantype_POPULATED)
+    FetchContent_Populate(cleantype)
+    # DO NOT exec add_subdirectory() on this one.
+endif()
+# Short name for cleantypes include dir
+set(CleantypeDir "${cleantype_SOURCE_DIR}/include_all_in_one/include/cleantype")
 
 add_library(SimulinkCAPI INTERFACE)
 target_sources(SimulinkCAPI INTERFACE "${LibSrc}")
-target_include_directories(SimulinkCAPI INTERFACE "${LibDir}" "${ExtDir}")
+target_include_directories(SimulinkCAPI INTERFACE "${LibDir}" "${CleantypeDir}")
 
 # Add the tests to the build.
 if(SLCAPI_COMPILE_TESTS)
-  include(FetchContent)
   include(GoogleTest)
 
   # google test
