@@ -18,6 +18,8 @@
 #define _PARAMETER_HPP_
 
 #include <exception>
+#include <functional>
+#include <optional>
 #include <sstream>
 #include <string>
 
@@ -56,6 +58,12 @@ public:
     // Returns a pointer to the parameter.
     template <typename T>
     inline T* const ptr(const std::string& Name);
+    // Returns an std::optional<> that containts the reference.
+    // It does not throw an exception if the Element is not found. It does use
+    // non-noexcept functions internally and can therefore not be declarated
+    // noexcept, unfortunately.
+    template <typename T>
+    std::optional<std::reference_wrapper<T>> opt(const std::string& PathAndName);
 }; // end of class CapiAccessor.
 
 template <typename WrappedElement>
@@ -72,6 +80,22 @@ template <typename T>
 T& CapiAccessor<WrappedElement>::get(const std::string& PathAndName)
 {
     return *ptr<T>(PathAndName);
+}
+
+template <typename WrappedElement>
+template <typename T>
+std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement>::opt(const std::string& PathAndName)
+{
+    std::optional<std::reference_wrapper<T>> Result;
+    try
+    {
+        Result = *ptr<T>(PathAndName);
+    }
+    catch (const std::exception& e)
+    {
+        // nothing
+    }
+    return Result;
 }
 
 template <typename WrappedElement>

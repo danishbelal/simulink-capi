@@ -130,6 +130,27 @@ TEST(CapiAccessor, BlockParameterDirect)
     EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
 }
 
+TEST(CapiAccessor, BlockParameterOptional)
+{
+    using WrappedElement = rtwCAPI_BlockParameters;
+    ResetModel();
+
+    constexpr double SetValue { 123.456 };
+    constexpr auto ElemPath { "Controller/Discrete-Time Integrator/gainval" };
+
+    auto& MMI { ModelStruct.DataMapInfo.mmi };
+    db::simulink::BlockParameters bp { MMI };
+    auto Opt { bp.opt<double>(ElemPath) };
+    Opt->get() = SetValue;
+
+    // Check if the parameter was actually written
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
+    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(MMI, ElemPath) };
+    double* Gain2 { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
+
+    EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
+}
+
 TEST(CapiAccessor, InvalidBlockParameter)
 {
     ResetModel();
@@ -172,6 +193,28 @@ TEST(CapiAccessor, ModelParameterDirect)
     auto& MMI { ModelStruct.DataMapInfo.mmi };
     db::simulink::ModelParameters bp { MMI };
     bp.get<ConfigBus>(ElemName) = SetValue;
+
+    // Check if the parameter was actually written
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
+    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(MMI, ElemName) };
+    auto* Actual { static_cast<ConfigBus*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
+
+    EXPECT_DOUBLE_EQ(SetValue.Gain, Actual->Gain) << "Parameter could not be set";
+    EXPECT_DOUBLE_EQ(SetValue.SomeOtherMember, Actual->SomeOtherMember) << "Parameter could not be set";
+}
+
+TEST(CapiAccessor, ModelParameterOptional)
+{
+    using WrappedElement = rtwCAPI_ModelParameters;
+    ResetModel();
+
+    constexpr ConfigBus SetValue { 23.6, 12.3 };
+    constexpr auto ElemName { "ModelConfig" };
+
+    auto& MMI { ModelStruct.DataMapInfo.mmi };
+    db::simulink::ModelParameters bp { MMI };
+    auto OptRef { bp.opt<ConfigBus>(ElemName) };
+    OptRef->get() = SetValue;
 
     // Check if the parameter was actually written
     void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
