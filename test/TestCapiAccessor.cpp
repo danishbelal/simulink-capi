@@ -151,13 +151,33 @@ TEST(CapiAccessor, BlockParameterOptional)
     EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
 }
 
-TEST(CapiAccessor, InvalidBlockParameter)
+TEST(CapiAccessor, InvalidBlockParameterGet)
 {
     ResetModel();
 
     auto& MMI { ModelStruct.DataMapInfo.mmi };
     db::simulink::BlockParameters bp { MMI };
     EXPECT_THROW(auto& ref { bp.get<double>("does/not/exist") }, std::runtime_error);
+}
+
+TEST(CapiAccessor, InvalidBlockParameterPtr)
+{
+    ResetModel();
+
+    auto& MMI { ModelStruct.DataMapInfo.mmi };
+    db::simulink::BlockParameters bp { MMI };
+    EXPECT_THROW(auto ptr { bp.ptr<double>("does/not/exist") }, std::runtime_error);
+}
+
+TEST(CapiAccessor, InvalidBlockParameterOpt)
+{
+    ResetModel();
+
+    auto& MMI { ModelStruct.DataMapInfo.mmi };
+    db::simulink::BlockParameters bp { MMI };
+    auto Opt { bp.opt<double>("does/not/exist") };
+    EXPECT_FALSE(Opt.has_value());
+    EXPECT_FALSE(Opt);
 }
 
 TEST(CapiAccessor, ModelParameterGet)
@@ -225,11 +245,31 @@ TEST(CapiAccessor, ModelParameterOptional)
     EXPECT_DOUBLE_EQ(SetValue.SomeOtherMember, Actual->SomeOtherMember) << "Parameter could not be set";
 }
 
-TEST(CapiAccessor, InvalidModelParameter)
+TEST(CapiAccessor, InvalidModelParameterGet)
 {
     ResetModel();
 
     auto& MMI { ModelStruct.DataMapInfo.mmi };
     db::simulink::ModelParameters mp { MMI };
     EXPECT_THROW(auto& ref { mp.get<double>("does-not-exist") }, std::runtime_error);
+}
+
+TEST(CapiAccessor, InvalidModelParameterPtr)
+{
+    ResetModel();
+
+    auto& MMI { ModelStruct.DataMapInfo.mmi };
+    db::simulink::ModelParameters mp { MMI };
+    EXPECT_THROW(auto ptr { mp.ptr<double>("does-not-exist") }, std::runtime_error);
+}
+
+TEST(CapiAccessor, InvalidModelParameterOpt)
+{
+    ResetModel();
+
+    auto& MMI { ModelStruct.DataMapInfo.mmi };
+    db::simulink::ModelParameters mp { MMI };
+    auto Opt { mp.opt<double>("does-not-exist") };
+    EXPECT_FALSE(Opt.has_value());
+    EXPECT_FALSE(Opt);
 }
