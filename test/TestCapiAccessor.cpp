@@ -88,6 +88,43 @@ static std::size_t GetAddrMapIndex(const rtwCAPI_ModelMappingInfo& MMI, const st
     return *AddrMapIdx;
 }
 
+TEST(TestCapiAccessorInternal, GetAddrMapIndex)
+{
+    // Verify the GetAddrMapIndex function against some magic numbers.
+    ResetModel();
+    auto& MMI { ModelStruct.DataMapInfo.mmi };
+
+    // Signals
+    auto S1 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/Discrete-Time Integrator/") };
+    auto S2 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/Model/") };
+    auto S3 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/AlgebraicLoopBreaker/") };
+    EXPECT_EQ(S1, 0);
+    EXPECT_EQ(S2, 5);
+    EXPECT_EQ(S3, 9);
+
+    // Blockparameters
+    auto BP1 { GetAddrMapIndex<rtwCAPI_BlockParameters>(MMI, "Controller/Constant/Value") };
+    auto BP2 { GetAddrMapIndex<rtwCAPI_BlockParameters>(MMI, "Controller/Discrete-Time Integrator/gainval") };
+    auto BP3 { GetAddrMapIndex<rtwCAPI_BlockParameters>(MMI, "Controller/AlgebraicLoopBreaker/InitialCondition") };
+    EXPECT_EQ(BP1, 10);
+    EXPECT_EQ(BP2, 11);
+    EXPECT_EQ(BP3, 16);
+
+    // Modelparameters
+    auto MP1 { GetAddrMapIndex<rtwCAPI_ModelParameters>(MMI, "ModelConfig") };
+    auto MP2 { GetAddrMapIndex<rtwCAPI_ModelParameters>(MMI, "mMatrix") };
+    auto MP3 { GetAddrMapIndex<rtwCAPI_ModelParameters>(MMI, "X4_DD") };
+    EXPECT_EQ(MP1, 19);
+    EXPECT_EQ(MP2, 20);
+    EXPECT_EQ(MP3, 22);
+
+    // Blockstates
+    auto BS1 { GetAddrMapIndex<rtwCAPI_States>(MMI, "Controller/Discrete-Time\nIntegrator/DSTATE") };
+    auto BS2 { GetAddrMapIndex<rtwCAPI_States>(MMI, "Controller/AlgebraicLoopBreaker/DSTATE") };
+    EXPECT_EQ(BS1, 17);
+    EXPECT_EQ(BS2, 18);
+}
+
 TEST(CapiAccessor, BlockParameterGet)
 {
     using WrappedElement = rtwCAPI_BlockParameters;
