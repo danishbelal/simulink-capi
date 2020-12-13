@@ -141,6 +141,7 @@ TEST(CapiAccessor, BlockParameterOptional)
     auto& MMI { ModelStruct.DataMapInfo.mmi };
     db::simulink::BlockParameters bp { MMI };
     auto Opt { bp.opt<double>(ElemPath) };
+    ASSERT_TRUE(Opt.has_value()) << "Element not found";
     Opt->get() = SetValue;
 
     // Check if the parameter was actually written
@@ -233,8 +234,9 @@ TEST(CapiAccessor, ModelParameterOptional)
 
     auto& MMI { ModelStruct.DataMapInfo.mmi };
     db::simulink::ModelParameters bp { MMI };
-    auto OptRef { bp.opt<ConfigBus>(ElemName) };
-    OptRef->get() = SetValue;
+    auto Opt { bp.opt<ConfigBus>(ElemName) };
+    ASSERT_TRUE(Opt.has_value()) << "Element not found";
+    Opt->get() = SetValue;
 
     // Check if the parameter was actually written
     void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
