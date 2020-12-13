@@ -87,21 +87,6 @@ template <typename T>
 std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement>::opt(const std::string& PathAndName)
 {
     std::optional<std::reference_wrapper<T>> Result;
-    try
-    {
-        Result = *ptr<T>(PathAndName);
-    }
-    catch (const std::exception& e)
-    {
-        // nothing
-    }
-    return Result;
-}
-
-template <typename WrappedElement>
-template <typename T>
-T* const CapiAccessor<WrappedElement>::ptr(const std::string& PathAndName)
-{
     // Search for the Parameter given its and Name.
     for (std::size_t i { 0 }; i < mNumParams; ++i)
     {
@@ -125,13 +110,26 @@ T* const CapiAccessor<WrappedElement>::ptr(const std::string& PathAndName)
 
 #endif
             const std::size_t AddrIndex { db::simulink::GetAddrIdx(mWE, i) };
-            return db::simulink::GetDataAddress<T>(mAddrMap, AddrIndex);
+            Result = *db::simulink::GetDataAddress<T>(mAddrMap, AddrIndex);
         }
     }
-    std::ostringstream os;
-    os << "Couldn't find Parameter '"
-       << PathAndName << "'";
-    throw std::runtime_error(os.str());
+    return Result;
+}
+
+template <typename WrappedElement>
+template <typename T>
+T* const CapiAccessor<WrappedElement>::ptr(const std::string& PathAndName)
+{
+    auto E { opt<T>(PathAndName) };
+    if (!E.has_value())
+    {
+        std::ostringstream os;
+        os << "Couldn't find Parameter '"
+           << PathAndName << "'";
+        throw std::runtime_error(os.str());
+    }
+
+    return &E.value().get();
 }
 
 }
