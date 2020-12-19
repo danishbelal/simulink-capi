@@ -52,16 +52,65 @@ class CapiAccessor
 public:
     CapiAccessor(const rtwCAPI_ModelMappingInfo& MMI);
 
-    // Returns a reference to the Parameter.
+    /// Returns a reference to the element.
+    ///
+    /// If you want to write the element, you \b must make sure to capture
+    /// a reference to the value. Otherwise you might accidentally copy
+    /// it - writes to a copy have no effect on the model!
+    ///
+    /// Writing to a BlockParameter of type double will looks like this:
+    /// \code{.cpp}
+    /// db::simulink::BlockParameters bp { ModelStruct.DataMapInfo.mmi };
+    /// auto& Gain { bp.get<double>("Controller/Discrete-Time Integrator/gainval") };
+    /// Gain = 23.35;
+    /// \endcode
+    ///
+    /// It is also possible to not store the reference, but rather write
+    /// directly to it. This is not recommended when repeatedly writing the
+    /// element, due to increased lookup overhead.
+    /// \code{.cpp}
+    /// db::simulink::BlockParameters bp { ModelStruct.DataMapInfo.mmi };
+    /// bp.get<double>("Controller/Discrete-Time Integrator/gainval") = 23.35;
+    /// \endcode
+    ///
+    /// \throws std::runtime_error if a type mismatch is detected (only when
+    /// type checking is enabled).
+    /// \see ptr()
+    /// \see opt()
     template <typename T>
     inline T& get(const std::string& Name);
-    // Returns a pointer to the parameter.
+
+    /// Returns a pointer to the element.
+    ///
+    /// Not very spectacular - it does what you expect.
+    ///
+    /// You can use it like this:
+    /// \code{.cpp}
+    /// db::simulink::BlockParameters bp { ModelStruct.DataMapInfo.mmi };
+    /// auto GainPtr { bp.ptr<double>("Controller/Discrete-Time Integrator/gainval") };
+    /// *GainPtr = 23.35;
+    /// \endcode
+    /// \throws std::runtime_error if a type mismatch is detected (only when
+    /// type checking is enabled).
+    /// \see get().
+    /// \see opt()
     template <typename T>
     inline T* const ptr(const std::string& Name);
-    // Returns an std::optional<> that containts the reference.
-    // It does not throw an exception if the Element is not found. It does use
-    // non-noexcept functions internally and can therefore not be declarated
-    // noexcept, unfortunately.
+
+    /// Returns an `optional` that might contain a reference to the desired
+    /// element.
+    ///
+    /// This does not throw an exception if the denoted element does not exist.
+    /// In this case an empty `std::optional` will be returned. This must be
+    /// explicitly checked by using `has_value()` (see example below).
+    /// \code{.cpp}
+    /// db::simulink::BlockParameters bp { ModelStruct.DataMapInfo.mmi };
+    /// auto Opt { bp.opt<double>("Controller/Discrete-Time Integrator/gainval") };
+    /// ASSERT(Opt.has_value());
+    /// Opt->get() = 23.35;
+    /// \endcode
+    /// \see get()
+    /// \see ptr()
     template <typename T>
     std::optional<std::reference_wrapper<T>> opt(const std::string& PathAndName);
 }; // end of class CapiAccessor.

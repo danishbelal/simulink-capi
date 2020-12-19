@@ -14,6 +14,8 @@
 // with this program; if not, write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
+/// \file
+
 #ifndef _ACCESSOR_HELPER_HPP_
 #define _ACCESSOR_HELPER_HPP_
 
@@ -25,6 +27,15 @@
 
 namespace db::simulink
 {
+/// Typetrait to check if the given type is a C-API Element.
+///
+/// The following types are valid Elements (and thus return `true`):
+/// - `rtwCAPI_BlockParameters`
+/// - `rtwCAPI_ModelParameters`
+/// - `rtwCAPI_Signals`
+/// - `rtwCAPI_States`
+///
+/// all other types return `false`.
 template <typename CapiElement>
 constexpr bool is_capi_element()
 {
@@ -36,6 +47,21 @@ constexpr bool is_capi_element()
     return ValidCapiElement;
 }
 
+/// Typetrait to check if the given type is a C-API Map like type.
+///
+/// C-API Maps store metainformation about the API Elements (States,
+/// Parameters and so on).  This permits type introspection but also
+/// allows gathering information about array dimensions and other useful
+/// stuff.
+///
+/// The following types are Map like types and thus return `true`:
+/// - `rtwCAPI_DataTypeMap`
+/// - `rtwCAPI_DimensionMap`
+/// - `rtwCAPI_FixPtMap`
+/// - `rtwCAPI_ElementMap`
+/// - `rtwCAPI_SampleTimeMap`
+///
+/// all other types return `false`.
 template <typename CapiElement>
 constexpr bool is_capi_map()
 {

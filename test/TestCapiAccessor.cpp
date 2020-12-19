@@ -13,6 +13,9 @@
 // You should have received a copy of the GNU General Public License along
 // with this program; if not, write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+// \file
+
 #define ENABLE_RUNTIME_TYPE_CHECKING
 
 #include "CapiAccessor.hpp"
@@ -88,9 +91,10 @@ static std::size_t GetAddrMapIndex(const rtwCAPI_ModelMappingInfo& MMI, const st
     return *AddrMapIdx;
 }
 
+/// Verify the internal GetAddrMapIndex Function against some
+/// magic numbers.
 TEST(TestCapiAccessorInternal, GetAddrMapIndex)
 {
-    // Verify the GetAddrMapIndex function against some magic numbers.
     ResetModel();
     auto& MMI { ModelStruct.DataMapInfo.mmi };
 
@@ -125,6 +129,8 @@ TEST(TestCapiAccessorInternal, GetAddrMapIndex)
     EXPECT_EQ(BS2, 18);
 }
 
+/// Test CapiAccessor::get<> for BlockParameters.
+/// .
 TEST(CapiAccessor, BlockParameterGet)
 {
     using WrappedElement = rtwCAPI_BlockParameters;
@@ -147,6 +153,8 @@ TEST(CapiAccessor, BlockParameterGet)
     EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
 }
 
+/// Test `CapiAccessor::get` for BlockParameters.
+/// .
 TEST(CapiAccessor, BlockParameterDirect)
 {
     using WrappedElement = rtwCAPI_BlockParameters;
@@ -167,6 +175,8 @@ TEST(CapiAccessor, BlockParameterDirect)
     EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
 }
 
+/// Test `CapiAccessor::opt` for BlockParameters.
+/// .
 TEST(CapiAccessor, BlockParameterOptional)
 {
     using WrappedElement = rtwCAPI_BlockParameters;
@@ -189,6 +199,8 @@ TEST(CapiAccessor, BlockParameterOptional)
     EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
 }
 
+/// Test `CapiAccessor::get` for invalid BlockParameters.
+/// .
 TEST(CapiAccessor, InvalidBlockParameterGet)
 {
     ResetModel();
@@ -198,6 +210,8 @@ TEST(CapiAccessor, InvalidBlockParameterGet)
     EXPECT_THROW(auto& ref { bp.get<double>("does/not/exist") }, std::runtime_error);
 }
 
+/// Test `CapiAccessor::ptr` for invalid BlockParameters.
+/// .
 TEST(CapiAccessor, InvalidBlockParameterPtr)
 {
     ResetModel();
@@ -207,6 +221,8 @@ TEST(CapiAccessor, InvalidBlockParameterPtr)
     EXPECT_THROW(auto ptr { bp.ptr<double>("does/not/exist") }, std::runtime_error);
 }
 
+/// Test `CapiAccessor::opt` for invalid BlockParameters.
+/// .
 TEST(CapiAccessor, InvalidBlockParameterOpt)
 {
     ResetModel();
@@ -218,6 +234,8 @@ TEST(CapiAccessor, InvalidBlockParameterOpt)
     EXPECT_FALSE(Opt);
 }
 
+/// Test `CapiAccessor::get` for ModelParameters.
+/// .
 TEST(CapiAccessor, ModelParameterGet)
 {
     using WrappedElement = rtwCAPI_ModelParameters;
@@ -240,6 +258,8 @@ TEST(CapiAccessor, ModelParameterGet)
     EXPECT_DOUBLE_EQ(SetValue.SomeOtherMember, Actual->SomeOtherMember) << "Parameter could not be set";
 }
 
+/// Test `CapiAccessor::get` for ModelParameters.
+/// .
 TEST(CapiAccessor, ModelParameterDirect)
 {
     using WrappedElement = rtwCAPI_ModelParameters;
@@ -261,6 +281,8 @@ TEST(CapiAccessor, ModelParameterDirect)
     EXPECT_DOUBLE_EQ(SetValue.SomeOtherMember, Actual->SomeOtherMember) << "Parameter could not be set";
 }
 
+/// Test `CapiAccessor::opt` for ModelParameters.
+/// .
 TEST(CapiAccessor, ModelParameterOptional)
 {
     using WrappedElement = rtwCAPI_ModelParameters;
@@ -284,6 +306,8 @@ TEST(CapiAccessor, ModelParameterOptional)
     EXPECT_DOUBLE_EQ(SetValue.SomeOtherMember, Actual->SomeOtherMember) << "Parameter could not be set";
 }
 
+/// Test `CapiAccessor::get` for invalid ModelParameters.
+/// .
 TEST(CapiAccessor, InvalidModelParameterGet)
 {
     ResetModel();
@@ -293,6 +317,8 @@ TEST(CapiAccessor, InvalidModelParameterGet)
     EXPECT_THROW(auto& ref { mp.get<double>("does-not-exist") }, std::runtime_error);
 }
 
+/// Test `CapiAccessor::ptr` for invalid ModelParameters.
+/// .
 TEST(CapiAccessor, InvalidModelParameterPtr)
 {
     ResetModel();
@@ -302,6 +328,8 @@ TEST(CapiAccessor, InvalidModelParameterPtr)
     EXPECT_THROW(auto ptr { mp.ptr<double>("does-not-exist") }, std::runtime_error);
 }
 
+/// Test `CapiAccessor::opt` for invalid ModelParameters.
+/// .
 TEST(CapiAccessor, InvalidModelParameterOpt)
 {
     ResetModel();
@@ -313,6 +341,8 @@ TEST(CapiAccessor, InvalidModelParameterOpt)
     EXPECT_FALSE(Opt);
 }
 
+/// Test `CapiAccessor::get` for Signals.
+/// .
 TEST(CapiAccessor, SignalGet)
 {
     using WrappedElement = rtwCAPI_Signals;
@@ -334,6 +364,8 @@ TEST(CapiAccessor, SignalGet)
     EXPECT_DOUBLE_EQ(SetValue, *Actual) << "Parameter could not be set";
 }
 
+/// Test `CapiAccessor::get` for Signals.
+/// .
 TEST(CapiAccessor, SignalDirect)
 {
     using WrappedElement = rtwCAPI_Signals;
@@ -354,6 +386,8 @@ TEST(CapiAccessor, SignalDirect)
     EXPECT_DOUBLE_EQ(SetValue, *Actual) << "Parameter could not be set";
 }
 
+/// Test `CapiAccessor::opt` for Signals.
+/// .
 TEST(CapiAccessor, SignalOpt)
 {
     using WrappedElement = rtwCAPI_Signals;
@@ -376,6 +410,8 @@ TEST(CapiAccessor, SignalOpt)
     EXPECT_DOUBLE_EQ(SetValue, *Actual) << "Parameter could not be set";
 }
 
+/// Test `CapiAccessor::get` for invalid Signals.
+/// .
 TEST(CapiAccessor, InvalidSignalGet)
 {
     ResetModel();
@@ -385,6 +421,8 @@ TEST(CapiAccessor, InvalidSignalGet)
     EXPECT_THROW(auto& ref { sigs.get<double>("does-not-exist") }, std::runtime_error);
 }
 
+/// Test `CapiAccessor::get` for invalid Signals.
+/// .
 TEST(CapiAccessor, InvalidSignalDirect)
 {
     ResetModel();
@@ -394,6 +432,8 @@ TEST(CapiAccessor, InvalidSignalDirect)
     EXPECT_THROW(auto ptr { sigs.ptr<double>("does-not-exist") }, std::runtime_error);
 }
 
+/// Test `CapiAccessor::opt` for invalid Signals.
+/// .
 TEST(CapiAccessor, InvalidSignalOpt)
 {
     ResetModel();
