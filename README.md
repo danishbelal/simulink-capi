@@ -1,6 +1,8 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause-Clear -->
 ![License](https://img.shields.io/github/license/danishbelal/simulink-capi)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/e42b17ddc7ea4b86a2d1e9a4af8bcc77)](https://app.codacy.com/gh/danishbelal/simulink-capi?utm_source=github.com&utm_medium=referral&utm_content=danishbelal/simulink-capi&utm_campaign=Badge_Grade)
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/danishbelal/simulink-capi.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/danishbelal/simulink-capi/context:cpp)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/danishbelal/simulink-capi.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/danishbelal/simulink-capi/alerts/)
 [![Build Status](https://travis-ci.com/danishbelal/simulink-capi.svg?branch=prealpha)](https://travis-ci.com/danishbelal/simulink-capi)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/std/the-standard )
 
