@@ -24,6 +24,7 @@
 #include <string>
 
 #include "AccessorHelper.hpp"
+#include "ModelTraits.hpp"
 
 #ifdef ENABLE_RUNTIME_TYPE_CHECKING
 #include "cleantype.hpp"
@@ -119,6 +120,10 @@ public:
     /// \see ptr()
     template <typename T>
     std::optional<std::reference_wrapper<T>> opt(const std::string& PathAndName);
+
+    /// \internal
+    template <typename T>
+    std::optional<std::reference_wrapper<T>> FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
 }; // end of class CapiAccessor.
 
 template <typename WrappedElement, typename ModelStruct>
@@ -139,35 +144,21 @@ template <typename T>
 std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct>::opt(const std::string& PathAndName)
 {
     std::optional<std::reference_wrapper<T>> Result;
-    // The total number of all contained Models.
-    // childMMIArrayLen does not count in the root model itself, therefore we need +1.
-    const std::size_t numModels { mMS.DataMapInfo.mmi.InstanceMap.childMMIArrayLen + 1 };
-    // Search for the Parameter given its and Name.
-    for (std::size_t ModelIdx {}; ModelIdx < numModels; ++ModelIdx)
+
+    Result = FindInMMI<T>(mMS.DataMapInfo.mmi, PathAndName);
+    if constexpr (has_childmmi_v<ModelStruct>)
     {
-        std::string CurrentParameter { db::simulink::GetName(mWE, i) };
-        if (CurrentParameter == PathAndName)
+        // Number of submodels on this level
+        const std::size_t NumModels { mMS.DataMapInfo.mmi.InstanceMap.childMMIArrayLen };
+        if (!Result.has_value() && NumModels > 0)
         {
-#ifdef ENABLE_RUNTIME_TYPE_CHECKING
-            std::size_t DataTypeIndex { db::simulink::GetDataTypeIdx(mWE, i) };
-            auto DataTypeMap { db::simulink::GetRawData<rtwCAPI_DataTypeMap>(mMMI) };
-            std::string ActualType { db::simulink::GetTypeName<T>(DataTypeMap, DataTypeIndex) };
-            std::string DeducedType { cleantype::clean<std::remove_reference_t<T>>() };
-
-            if (ActualType != DeducedType)
+            for (std::size_t i {}; !Result.has_value() && i < NumModels; ++i)
             {
-                std::ostringstream os;
-                os << "Type mismatch "
-                   << "(" << ActualType
-                   << " vs. " << DeducedType << ")\n";
-                throw std::runtime_error(os.str());
+                Result = FindInMMI(mMS.DataMapInfo.childMMI[i], PathAndName);
             }
-
-#endif
-            const std::size_t AddrIndex { db::simulink::GetAddrIdx(mWE, i) };
-            Result = *db::simulink::GetDataAddress<T>(mAddrMap, AddrIndex);
         }
     }
+
     return Result;
 }
 
@@ -185,6 +176,44 @@ T* const CapiAccessor<WrappedElement, ModelStruct>::ptr(const std::string& PathA
     }
 
     return &E.value().get();
+}
+
+template <typename WrappedElement, typename ModelStruct>
+template <typename T>
+std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct>::FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
+{
+    std::optional<std::reference_wrapper<T>> Result;
+
+    const auto NumElements { db::simulink::GetCount<WrappedElement>(MMI) };
+    const auto Data { db::simulink::GetRawData<WrappedElement>(MMI) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
+
+    // TODO: replace with std search algorithm
+    for (std::size_t i {}; i < NumElements; ++i)
+    {
+        std::string CurrentParameter { db::simulink::GetName(Data, i) };
+        if (CurrentParameter == PathAndName)
+        {
+#ifdef ENABLE_RUNTIME_TYPE_CHECKING
+            std::size_t DataTypeIndex { db::simulink::GetDataTypeIdx(Data, i) };
+            auto DataTypeMap { db::simulink::GetRawData<rtwCAPI_DataTypeMap>(MMI) };
+            std::string ActualType { db::simulink::GetTypeName<T>(DataTypeMap, DataTypeIndex) };
+            std::string DeducedType { cleantype::clean<std::remove_reference_t<T>>() };
+
+            if (ActualType != DeducedType)
+            {
+                std::ostringstream os;
+                os << "Type mismatch "
+                   << "(" << ActualType
+                   << " vs. " << DeducedType << ")\n";
+                throw std::runtime_error(os.str());
+            }
+#endif
+            const std::size_t AddrIndex { db::simulink::GetAddrIdx(Data, i) };
+            Result = *db::simulink::GetDataAddress<T>(AddrMap, AddrIndex);
+        }
+    }
+    return Result;
 }
 
 }
