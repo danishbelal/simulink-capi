@@ -33,24 +33,30 @@
 namespace db::simulink
 {
 
-template <typename WrappedElement>
+template <typename WrappedElement, typename ModelStruct>
 class CapiAccessor;
 
-using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters>;
-using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters>;
-using States = CapiAccessor<rtwCAPI_States>;
-using Signals = CapiAccessor<rtwCAPI_Signals>;
+template <typename ModelStruct>
+using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters, ModelStruct>;
+template <typename ModelStruct>
+using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters, ModelStruct>;
+template <typename ModelStruct>
+using States = CapiAccessor<rtwCAPI_States, ModelStruct>;
+template <typename ModelStruct>
+using Signals = CapiAccessor<rtwCAPI_Signals, ModelStruct>;
 
-template <typename WrappedElement>
+template <typename WrappedElement, typename ModelStruct>
 class CapiAccessor
 {
-    const std::size_t mNumParams;
-    const WrappedElement* const mWE;
-    void* const* const mAddrMap;
-    const rtwCAPI_ModelMappingInfo& mMMI;
+    static_assert(has_datamapinfo_v<ModelStruct>,
+        "The Model Structure needs to have a DataMapInfo Member."
+        "If it doesnt have one, its either not a Model Structure, "
+        "or you didnt enable the C API.");
+
+    const ModelStruct& mMS;
 
 public:
-    CapiAccessor(const rtwCAPI_ModelMappingInfo& MMI);
+    CapiAccessor(const ModelStruct& MS);
 
     /// Returns a reference to the element.
     ///
@@ -60,7 +66,7 @@ public:
     ///
     /// Writing to a BlockParameter of type double will looks like this:
     /// \code{.cpp}
-    /// db::simulink::BlockParameters bp { ModelStruct.DataMapInfo.mmi };
+    /// db::simulink::BlockParameters bp { ModelStruct };
     /// auto& Gain { bp.get<double>("Controller/Discrete-Time Integrator/gainval") };
     /// Gain = 23.35;
     /// \endcode
@@ -69,7 +75,7 @@ public:
     /// directly to it. This is not recommended when repeatedly writing the
     /// element, due to increased lookup overhead.
     /// \code{.cpp}
-    /// db::simulink::BlockParameters bp { ModelStruct.DataMapInfo.mmi };
+    /// db::simulink::BlockParameters bp { ModelStruct };
     /// bp.get<double>("Controller/Discrete-Time Integrator/gainval") = 23.35;
     /// \endcode
     ///
@@ -86,7 +92,7 @@ public:
     ///
     /// You can use it like this:
     /// \code{.cpp}
-    /// db::simulink::BlockParameters bp { ModelStruct.DataMapInfo.mmi };
+    /// db::simulink::BlockParameters bp { ModelStruct };
     /// auto GainPtr { bp.ptr<double>("Controller/Discrete-Time Integrator/gainval") };
     /// *GainPtr = 23.35;
     /// \endcode
@@ -104,7 +110,7 @@ public:
     /// In this case an empty `std::optional` will be returned. This must be
     /// explicitly checked by using `has_value()` (see example below).
     /// \code{.cpp}
-    /// db::simulink::BlockParameters bp { ModelStruct.DataMapInfo.mmi };
+    /// db::simulink::BlockParameters bp { ModelStruct };
     /// auto Opt { bp.opt<double>("Controller/Discrete-Time Integrator/gainval") };
     /// ASSERT(Opt.has_value());
     /// Opt->get() = 23.35;
@@ -115,29 +121,29 @@ public:
     std::optional<std::reference_wrapper<T>> opt(const std::string& PathAndName);
 }; // end of class CapiAccessor.
 
-template <typename WrappedElement>
-CapiAccessor<WrappedElement>::CapiAccessor(const rtwCAPI_ModelMappingInfo& MMI)
-    : mNumParams(db::simulink::GetCount<WrappedElement>(MMI))
-    , mWE(db::simulink::GetRawData<WrappedElement>(MMI))
-    , mAddrMap(rtwCAPI_GetDataAddressMap(&MMI))
-    , mMMI(MMI)
+template <typename WrappedElement, typename ModelStruct>
+CapiAccessor<WrappedElement, ModelStruct>::CapiAccessor(const ModelStruct& MS)
+    : mMS(MS)
 {
 }
 
-template <typename WrappedElement>
+template <typename WrappedElement, typename ModelStruct>
 template <typename T>
-T& CapiAccessor<WrappedElement>::get(const std::string& PathAndName)
+T& CapiAccessor<WrappedElement, ModelStruct>::get(const std::string& PathAndName)
 {
     return *ptr<T>(PathAndName);
 }
 
-template <typename WrappedElement>
+template <typename WrappedElement, typename ModelStruct>
 template <typename T>
-std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement>::opt(const std::string& PathAndName)
+std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct>::opt(const std::string& PathAndName)
 {
     std::optional<std::reference_wrapper<T>> Result;
+    // The total number of all contained Models.
+    // childMMIArrayLen does not count in the root model itself, therefore we need +1.
+    const std::size_t numModels { mMS.DataMapInfo.mmi.InstanceMap.childMMIArrayLen + 1 };
     // Search for the Parameter given its and Name.
-    for (std::size_t i { 0 }; i < mNumParams; ++i)
+    for (std::size_t ModelIdx {}; ModelIdx < numModels; ++ModelIdx)
     {
         std::string CurrentParameter { db::simulink::GetName(mWE, i) };
         if (CurrentParameter == PathAndName)
@@ -165,9 +171,9 @@ std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement>::opt(const
     return Result;
 }
 
-template <typename WrappedElement>
+template <typename WrappedElement, typename ModelStruct>
 template <typename T>
-T* const CapiAccessor<WrappedElement>::ptr(const std::string& PathAndName)
+T* const CapiAccessor<WrappedElement, ModelStruct>::ptr(const std::string& PathAndName)
 {
     auto E { opt<T>(PathAndName) };
     if (!E.has_value())

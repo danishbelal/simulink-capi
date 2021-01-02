@@ -64,6 +64,11 @@ static void DestroyModel()
     Controller_terminate(&ModelStruct);
 }
 
+using BlockParameters = db::simulink::BlockParameters<RT_MODEL_Controller_T>;
+using ModelParameters = db::simulink::ModelParameters<RT_MODEL_Controller_T>;
+using States = db::simulink::States<RT_MODEL_Controller_T>;
+using Signals = db::simulink::Signals<RT_MODEL_Controller_T>;
+
 // All the tests need to compare the result of the provided accessor to
 // the "actual" value.  Retrieving the actual value requires searching the
 // ModelMappingInfo for the corresponding data entry.
@@ -139,15 +144,14 @@ TEST(CapiAccessor, BlockParameterGet)
     constexpr double SetValue { 123.456 };
     constexpr auto ElemPath { "Controller/Discrete-Time Integrator/gainval" };
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::BlockParameters bp { MMI };
+    BlockParameters bp { ModelStruct };
     auto& Gain { bp.get<double>(ElemPath) };
     Gain = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
     // Search for the AddressMap Index.
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(MMI, ElemPath) };
+    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ModelStruct.DataMapInfo.mmi, ElemPath) };
     double* Gain2 { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
     EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
@@ -163,13 +167,12 @@ TEST(CapiAccessor, BlockParameterDirect)
     constexpr double SetValue { 123.456 };
     constexpr auto ElemPath { "Controller/Discrete-Time Integrator/gainval" };
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::BlockParameters bp { MMI };
+    BlockParameters bp { ModelStruct };
     bp.get<double>(ElemPath) = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(MMI, ElemPath) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ModelStruct.DataMapInfo.mmi, ElemPath) };
     double* Gain2 { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
     EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
@@ -185,15 +188,14 @@ TEST(CapiAccessor, BlockParameterOptional)
     constexpr double SetValue { 123.456 };
     constexpr auto ElemPath { "Controller/Discrete-Time Integrator/gainval" };
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::BlockParameters bp { MMI };
+    BlockParameters bp { ModelStruct };
     auto Opt { bp.opt<double>(ElemPath) };
     ASSERT_TRUE(Opt.has_value()) << "Element not found";
     Opt->get() = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(MMI, ElemPath) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ModelStruct.DataMapInfo.mmi, ElemPath) };
     double* Gain2 { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
     EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
@@ -205,8 +207,7 @@ TEST(CapiAccessor, InvalidBlockParameterGet)
 {
     ResetModel();
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::BlockParameters bp { MMI };
+    BlockParameters bp { ModelStruct };
     EXPECT_THROW(auto& ref { bp.get<double>("does/not/exist") }, std::runtime_error);
 }
 
@@ -216,8 +217,7 @@ TEST(CapiAccessor, InvalidBlockParameterPtr)
 {
     ResetModel();
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::BlockParameters bp { MMI };
+    BlockParameters bp { ModelStruct };
     EXPECT_THROW(auto ptr { bp.ptr<double>("does/not/exist") }, std::runtime_error);
 }
 
@@ -227,8 +227,7 @@ TEST(CapiAccessor, InvalidBlockParameterOpt)
 {
     ResetModel();
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::BlockParameters bp { MMI };
+    BlockParameters bp { ModelStruct };
     auto Opt { bp.opt<double>("does/not/exist") };
     EXPECT_FALSE(Opt.has_value());
     EXPECT_FALSE(Opt);
@@ -244,14 +243,13 @@ TEST(CapiAccessor, ModelParameterGet)
     constexpr ConfigBus SetValue { 23.6, 12.3 };
     constexpr auto ElemName { "ModelConfig" };
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::ModelParameters bp { MMI };
+    ModelParameters bp { ModelStruct };
     auto& Config { bp.get<ConfigBus>(ElemName) };
     Config = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(MMI, ElemName) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ModelStruct.DataMapInfo.mmi, ElemName) };
     auto* Actual { static_cast<ConfigBus*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
     EXPECT_DOUBLE_EQ(SetValue.Gain, Actual->Gain) << "Parameter could not be set";
@@ -268,13 +266,12 @@ TEST(CapiAccessor, ModelParameterDirect)
     constexpr ConfigBus SetValue { 23.6, 12.3 };
     constexpr auto ElemName { "ModelConfig" };
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::ModelParameters bp { MMI };
+    ModelParameters bp { ModelStruct };
     bp.get<ConfigBus>(ElemName) = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(MMI, ElemName) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ModelStruct.DataMapInfo.mmi, ElemName) };
     auto* Actual { static_cast<ConfigBus*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
     EXPECT_DOUBLE_EQ(SetValue.Gain, Actual->Gain) << "Parameter could not be set";
@@ -291,15 +288,14 @@ TEST(CapiAccessor, ModelParameterOptional)
     constexpr ConfigBus SetValue { 23.6, 12.3 };
     constexpr auto ElemName { "ModelConfig" };
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::ModelParameters bp { MMI };
+    ModelParameters bp { ModelStruct };
     auto Opt { bp.opt<ConfigBus>(ElemName) };
     ASSERT_TRUE(Opt.has_value()) << "Element not found";
     Opt->get() = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(MMI, ElemName) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ModelStruct.DataMapInfo.mmi, ElemName) };
     auto* Actual { static_cast<ConfigBus*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
     EXPECT_DOUBLE_EQ(SetValue.Gain, Actual->Gain) << "Parameter could not be set";
@@ -312,8 +308,7 @@ TEST(CapiAccessor, InvalidModelParameterGet)
 {
     ResetModel();
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::ModelParameters mp { MMI };
+    ModelParameters mp { ModelStruct };
     EXPECT_THROW(auto& ref { mp.get<double>("does-not-exist") }, std::runtime_error);
 }
 
@@ -323,8 +318,7 @@ TEST(CapiAccessor, InvalidModelParameterPtr)
 {
     ResetModel();
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::ModelParameters mp { MMI };
+    ModelParameters mp { ModelStruct };
     EXPECT_THROW(auto ptr { mp.ptr<double>("does-not-exist") }, std::runtime_error);
 }
 
@@ -334,8 +328,7 @@ TEST(CapiAccessor, InvalidModelParameterOpt)
 {
     ResetModel();
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::ModelParameters mp { MMI };
+    ModelParameters mp { ModelStruct };
     auto Opt { mp.opt<double>("does-not-exist") };
     EXPECT_FALSE(Opt.has_value());
     EXPECT_FALSE(Opt);
@@ -351,14 +344,13 @@ TEST(CapiAccessor, SignalGet)
     constexpr double SetValue { 5.4 };
     constexpr auto ElemPathAndName { "Controller/Sum/" };
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::Signals sigs { MMI };
+    Signals sigs { ModelStruct };
     auto& Sum { sigs.get<double>(ElemPathAndName) };
     Sum = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(MMI, ElemPathAndName) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ModelStruct.DataMapInfo.mmi, ElemPathAndName) };
     auto* Actual { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
     EXPECT_DOUBLE_EQ(SetValue, *Actual) << "Parameter could not be set";
@@ -374,13 +366,12 @@ TEST(CapiAccessor, SignalDirect)
     constexpr double SetValue { 5.4 };
     constexpr auto ElemPathAndName { "Controller/Sum/" };
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::Signals sigs { MMI };
+    Signals sigs { ModelStruct };
     sigs.get<double>(ElemPathAndName) = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(MMI, ElemPathAndName) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ModelStruct.DataMapInfo.mmi, ElemPathAndName) };
     auto* Actual { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
     EXPECT_DOUBLE_EQ(SetValue, *Actual) << "Parameter could not be set";
@@ -396,15 +387,14 @@ TEST(CapiAccessor, SignalOpt)
     constexpr double SetValue { 5.4 };
     constexpr auto ElemPathAndName { "Controller/Sum/" };
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::Signals sigs { MMI };
+    Signals sigs { ModelStruct };
     auto Sum { sigs.opt<double>(ElemPathAndName) };
     ASSERT_TRUE(Sum.has_value());
     Sum->get() = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(MMI, ElemPathAndName) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ModelStruct.DataMapInfo.mmi, ElemPathAndName) };
     auto* Actual { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
     EXPECT_DOUBLE_EQ(SetValue, *Actual) << "Parameter could not be set";
@@ -416,8 +406,7 @@ TEST(CapiAccessor, InvalidSignalGet)
 {
     ResetModel();
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::Signals sigs { MMI };
+    Signals sigs { ModelStruct };
     EXPECT_THROW(auto& ref { sigs.get<double>("does-not-exist") }, std::runtime_error);
 }
 
@@ -427,8 +416,7 @@ TEST(CapiAccessor, InvalidSignalDirect)
 {
     ResetModel();
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::Signals sigs { MMI };
+    Signals sigs { ModelStruct };
     EXPECT_THROW(auto ptr { sigs.ptr<double>("does-not-exist") }, std::runtime_error);
 }
 
@@ -438,8 +426,7 @@ TEST(CapiAccessor, InvalidSignalOpt)
 {
     ResetModel();
 
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-    db::simulink::Signals sigs { MMI };
+    Signals sigs { ModelStruct };
     auto Opt { sigs.opt<double>("does-not-exist") };
     EXPECT_FALSE(Opt.has_value());
     EXPECT_FALSE(Opt);
