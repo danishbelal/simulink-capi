@@ -4,12 +4,14 @@
 #include "rtw_capi.h"
 #include "rtw_modelmap.h"
 #include "ControllerRef_capi_host.h"
+#include "ControllerRef_capi_host.h"
 
 typedef struct
 {
   rtwCAPI_ModelMappingInfo mmi;
-  rtwCAPI_ModelMappingInfo *childMMI[1];
+  rtwCAPI_ModelMappingInfo *childMMI[2];
   ControllerRef_host_DataMapInfo_T child0;
+  ControllerRef_host_DataMapInfo_T child1;
 }
 Controller_host_DataMapInfo_T;
 

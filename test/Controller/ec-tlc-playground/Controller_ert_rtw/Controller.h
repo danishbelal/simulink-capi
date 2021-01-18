@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'Controller'.
  *
- * Model version                  : 1.61
+ * Model version                  : 1.74
  * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Fri Dec  4 11:15:12 2020
+ * C/C++ source code generated on : Fri Jan  8 15:55:01 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -53,12 +53,14 @@
 typedef struct
 {
   real_T MatGain[9];                   /* '<Root>/MatGain' */
-  real_T Model;                        /* '<Root>/Model' */
+  real_T ModelRef1;                    /* '<Root>/ModelRef1' */
+  real_T ModelRef2;                    /* '<Root>/ModelRef2' */
+  real_T Sum3;                         /* '<Root>/Sum3' */
   real_T Sum4[9];                      /* '<Root>/Sum4' */
-  real_T ConfigDDGain;                 /* '<Root>/ConfigDDGain' */
-  real_T Sum3[9];                      /* '<Root>/Sum3' */
-  real_T ConfigGain;                   /* '<Root>/ConfigGain' */
-  real_T AlgebraicLoopBreaker;         /* '<Root>/AlgebraicLoopBreaker' */
+  real_T ConfigMW2;                    /* '<Root>/ConfigMW2' */
+  real_T Sum5[9];                      /* '<Root>/Sum5' */
+  real_T ConfigMW1;                    /* '<Root>/ConfigMW1' */
+  real_T AlgLoop;                      /* '<Root>/AlgLoop' */
   real_T Sum;                          /* '<Root>/Sum' */
   real_T SuperDuperGainBlock;          /* '<Root>/SuperDuperGainBlock' */
   real_T DiscreteTimeIntegrator;       /* '<Root>/Discrete-Time Integrator' */
@@ -68,16 +70,21 @@ BlockIO_Controller_T;
 /* Block states (default storage) for system '<Root>' */
 typedef struct
 {
-  real_T AlgebraicLoopBreaker_DSTATE;  /* '<Root>/AlgebraicLoopBreaker' */
+  real_T AlgLoop_DSTATE;               /* '<Root>/AlgLoop' */
   real_T DiscreteTimeIntegrator_DSTATE;/* '<Root>/Discrete-Time Integrator' */
-  rtMdlrefDWork_ControllerRef_T Model_InstanceData;/* '<Root>/Model' */
+  rtMdlrefDWork_ControllerRef_T ModelRef1_InstanceData;/* '<Root>/ModelRef1' */
+  rtMdlrefDWork_ControllerRef_T ModelRef2_InstanceData;/* '<Root>/ModelRef2' */
 }
 D_Work_Controller_T;
 
 /* instance parameters, for system '<Root>' */
 typedef struct
 {
-  InstP_ControllerRef_T InstP_Model;   /* '<Root>/Model' */
+  InstP_ControllerRef_T InstP_ModelRef1;/* '<Root>/ModelRef1' */
+  InstP_ControllerRef_T InstP_ModelRef2;/* '<Root>/ModelRef2' */
+  real_T mMatrix[9];                   /* Variable: mMatrix
+                                        * Referenced by: '<Root>/MatGain'
+                                        */
 }
 InstP_Controller_T;
 
@@ -101,21 +108,18 @@ ExternalOutputs_Controller_T;
 /* Parameters (default storage) */
 struct Parameters_Controller_T_
 {
-  ConfigBus ModelConfig;               /* Variable: ModelConfig
-                                        * Referenced by: '<Root>/ConfigGain'
-                                        */
-  real_T mMatrix[9];                   /* Variable: mMatrix
-                                        * Referenced by: '<Root>/MatGain'
-                                        */
   real_T Constant_Value[9];            /* Expression: eye(3)
                                         * Referenced by: '<Root>/Constant'
                                         */
-  real_T ConfigDDGain_Gain;            /* Expression: Config3_DD(3,3,3).Gain
-                                        * Referenced by: '<Root>/ConfigDDGain'
+  real_T ConfigMW2_Gain;               /* Expression: Config3_MW(2).Gain
+                                        * Referenced by: '<Root>/ConfigMW2'
                                         */
-  real_T AlgebraicLoopBreaker_InitialCon;/* Expression: 0
-                                          * Referenced by: '<Root>/AlgebraicLoopBreaker'
-                                          */
+  real_T ConfigMW1_Gain;               /* Expression: Config3_MW(1).Gain
+                                        * Referenced by: '<Root>/ConfigMW1'
+                                        */
+  real_T AlgLoop_InitialCondition;     /* Expression: 0
+                                        * Referenced by: '<Root>/AlgLoop'
+                                        */
   real_T SuperDuperGainBlock_Gain;     /* Expression: 2
                                         * Referenced by: '<Root>/SuperDuperGainBlock'
                                         */
@@ -143,10 +147,10 @@ struct tag_RTM_Controller_T
   struct
   {
     rtwCAPI_ModelMappingInfo mmi;
-    void* dataAddress[23];
-    int32_T* vardimsAddress[23];
-    RTWLoggingFcnPtr loggingPtrs[23];
-    rtwCAPI_ModelMappingInfo* childMMI[1];
+    void* dataAddress[26];
+    int32_T* vardimsAddress[26];
+    RTWLoggingFcnPtr loggingPtrs[26];
+    rtwCAPI_ModelMappingInfo* childMMI[2];
   }
   DataMapInfo;
 

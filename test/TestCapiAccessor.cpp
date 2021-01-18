@@ -50,8 +50,10 @@ static void ResetModel()
     std::memset(&ModelStruct, 0x00, sizeof(ModelStruct));
     std::memset(&BlockSignals, 0x00, sizeof(BlockSignals));
     std::memset(&ModelStates, 0x00, sizeof(ModelStates));
-    ModelInstanceParameter.InstP_Model.SubmodelConfig.Gain = 2.3;
-    ModelInstanceParameter.InstP_Model.SubmodelConfig.SomeOtherMember = 12.3;
+    ModelInstanceParameter.InstP_ModelRef1.SubmodelConfig.Gain = 2.3;
+    ModelInstanceParameter.InstP_ModelRef1.SubmodelConfig.SomeOtherMember = 12.3;
+    ModelInstanceParameter.InstP_ModelRef2.SubmodelConfig.Gain = 23.5;
+    ModelInstanceParameter.InstP_ModelRef2.SubmodelConfig.SomeOtherMember = 355.1;
 
     ModelStruct.dwork = &ModelStates;
     ModelStruct.blockIO = &BlockSignals;

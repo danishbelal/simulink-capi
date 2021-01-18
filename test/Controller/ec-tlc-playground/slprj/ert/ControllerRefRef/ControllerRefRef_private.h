@@ -1,11 +1,11 @@
 /*
- * File: ControllerRef_private.h
+ * File: ControllerRefRef_private.h
  *
- * Code generated for Simulink model 'ControllerRef'.
+ * Code generated for Simulink model 'ControllerRefRef'.
  *
- * Model version                  : 1.9
+ * Model version                  : 1.2
  * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Fri Jan  8 15:54:48 2021
+ * C/C++ source code generated on : Fri Jan  8 15:54:36 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -13,20 +13,12 @@
  * Validation result: Not run
  */
 
-#ifndef RTW_HEADER_ControllerRef_private_h_
-#define RTW_HEADER_ControllerRef_private_h_
+#ifndef RTW_HEADER_ControllerRefRef_private_h_
+#define RTW_HEADER_ControllerRefRef_private_h_
 #include "rtwtypes.h"
 #include "builtin_typeid_types.h"
 
 /* Macros for accessing real-time model data structure */
-#ifndef rtmGetControllerRef_InstP_ref
-# define rtmGetControllerRef_InstP_ref(rtm) ((rtm)->ControllerRef_InstP_ref)
-#endif
-
-#ifndef rtmSetControllerRef_InstP_ref
-# define rtmSetControllerRef_InstP_ref(rtm, val) ((rtm)->ControllerRef_InstP_ref = (val))
-#endif
-
 #ifndef rtmGetDataMapInfo
 # define rtmGetDataMapInfo(rtm)        ((rtm)->DataMapInfo)
 #endif
@@ -51,9 +43,9 @@
 # define rtmSetErrorStatusPointer(rtm, val) ((rtm)->errorStatus = (val))
 #endif
 
-extern Parameters_ControllerRef_T ControllerRef_P;
+extern Parameters_ControllerRefRef_T ControllerRefRef_P;
 
-#endif                                 /* RTW_HEADER_ControllerRef_private_h_ */
+#endif                              /* RTW_HEADER_ControllerRefRef_private_h_ */
 
 /*
  * File trailer for generated code.

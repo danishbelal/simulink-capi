@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'Controller'.
  *
- * Model version                  : 1.61
+ * Model version                  : 1.74
  * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Fri Dec  4 11:15:12 2020
+ * C/C++ source code generated on : Fri Jan  8 15:55:01 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -39,21 +39,6 @@ real_T rtP_X4_DD[64] =
 /* Block parameters (default storage) */
 Parameters_Controller_T Controller_P =
 {
-  /* Variable: ModelConfig
-   * Referenced by: '<Root>/ConfigGain'
-   */
-  {
-    2.3,
-    12.3
-  },
-
-  /* Variable: mMatrix
-   * Referenced by: '<Root>/MatGain'
-   */
-  {
-    1.0, 3.0, 6.0, 2.0, 4.0, 7.0, 3.0, 5.0, 8.0
-  },
-
   /* Expression: eye(3)
    * Referenced by: '<Root>/Constant'
    */
@@ -61,13 +46,18 @@ Parameters_Controller_T Controller_P =
     1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0
   },
 
-  /* Expression: Config3_DD(3,3,3).Gain
-   * Referenced by: '<Root>/ConfigDDGain'
+  /* Expression: Config3_MW(2).Gain
+   * Referenced by: '<Root>/ConfigMW2'
+   */
+  1.5,
+
+  /* Expression: Config3_MW(1).Gain
+   * Referenced by: '<Root>/ConfigMW1'
    */
   1.5,
 
   /* Expression: 0
-   * Referenced by: '<Root>/AlgebraicLoopBreaker'
+   * Referenced by: '<Root>/AlgLoop'
    */
   0.0,
 

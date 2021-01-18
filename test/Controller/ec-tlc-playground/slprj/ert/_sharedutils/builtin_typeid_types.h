@@ -1,11 +1,11 @@
 /*
  * File: builtin_typeid_types.h
  *
- * Code generated for Simulink model 'ControllerRef'.
+ * Code generated for Simulink model 'ControllerRefRef'.
  *
- * Model version                  : 1.6
+ * Model version                  : 1.2
  * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Fri Dec  4 11:03:38 2020
+ * C/C++ source code generated on : Tue Jan  5 07:26:24 2021
  */
 
 #ifndef BUILTIN_TYPEID_TYPES_H

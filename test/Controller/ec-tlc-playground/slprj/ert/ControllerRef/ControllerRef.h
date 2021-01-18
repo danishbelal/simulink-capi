@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'ControllerRef'.
  *
- * Model version                  : 1.8
+ * Model version                  : 1.9
  * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Fri Dec  4 11:15:03 2020
+ * C/C++ source code generated on : Fri Jan  8 15:54:48 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -25,13 +25,25 @@
 
 #include "ControllerRef_types.h"
 
+/* Child system includes */
+#include "ControllerRefRef.h"
+
 /* Block signals for model 'ControllerRef' */
 typedef struct
 {
   real_T ConfigGain;                   /* '<Root>/ConfigGain' */
+  real_T Model;                        /* '<Root>/Model' */
   real_T NormalGain;                   /* '<Root>/NormalGain' */
+  real_T Sum1;                         /* '<Root>/Sum1' */
 }
 rtB_ControllerRef_T;
+
+/* Block states (default storage) for model 'ControllerRef' */
+typedef struct
+{
+  rtMdlrefDWork_ControllerRefRe_T Model_InstanceData;/* '<Root>/Model' */
+}
+rtDW_ControllerRef_T;
 
 /* instance parameters, for model 'ControllerRef' */
 typedef struct
@@ -63,9 +75,10 @@ struct tag_RTM_ControllerRef_T
   struct
   {
     rtwCAPI_ModelMappingInfo mmi;
-    void* dataAddress[4];
-    int32_T* vardimsAddress[4];
-    RTWLoggingFcnPtr loggingPtrs[4];
+    void* dataAddress[6];
+    int32_T* vardimsAddress[6];
+    RTWLoggingFcnPtr loggingPtrs[6];
+    rtwCAPI_ModelMappingInfo* childMMI[1];
   }
   DataMapInfo;
 
@@ -75,6 +88,7 @@ struct tag_RTM_ControllerRef_T
 typedef struct
 {
   rtB_ControllerRef_T rtb;
+  rtDW_ControllerRef_T rtdw;
   RT_MODEL_ControllerRef_T rtm;
 }
 rtMdlrefDWork_ControllerRef_T;
@@ -82,8 +96,8 @@ rtMdlrefDWork_ControllerRef_T;
 /* Model reference registration function */
 extern void ControllerRef_initialize(const char_T **rt_errorStatus,
   RT_MODEL_ControllerRef_T *const ControllerRef_M, rtB_ControllerRef_T *localB,
-  rtwCAPI_ModelMappingInfo *rt_ParentMMI, const char_T *rt_ChildPath, int_T
-  rt_ChildMMIIdx, int_T rt_CSTATEIdx);
+  rtDW_ControllerRef_T *localDW, rtwCAPI_ModelMappingInfo *rt_ParentMMI, const
+  char_T *rt_ChildPath, int_T rt_ChildMMIIdx, int_T rt_CSTATEIdx);
 
 /* Function to get C API Model Mapping Static Info */
 extern const rtwCAPI_ModelMappingStaticInfo*

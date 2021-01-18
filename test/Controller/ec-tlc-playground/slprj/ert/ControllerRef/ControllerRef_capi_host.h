@@ -3,10 +3,13 @@
 #ifdef HOST_CAPI_BUILD
 #include "rtw_capi.h"
 #include "rtw_modelmap.h"
+#include "ControllerRefRef_capi_host.h"
 
 typedef struct
 {
   rtwCAPI_ModelMappingInfo mmi;
+  rtwCAPI_ModelMappingInfo *childMMI[1];
+  ControllerRefRef_host_DataMapInfo_T child0;
 }
 ControllerRef_host_DataMapInfo_T;
 

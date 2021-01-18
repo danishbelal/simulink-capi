@@ -27,6 +27,15 @@ set(ControllerRefSources "${ControllerRefPath}/ControllerRef.c"
                          "${ControllerRefPath}/ControllerRef_capi.h"
                          "${ControllerRefPath}/ControllerRef_capi_host.h")
 
+set(ControllerRefRefPath "${CMAKE_CURRENT_SOURCE_DIR}/ec-tlc-playground/slprj/ert/ControllerRefRef")
+set(ControllerRefRefSources "${ControllerRefRefPath}/ControllerRefRef.c"
+                            "${ControllerRefRefPath}/ControllerRefRef.h"
+                            "${ControllerRefRefPath}/ControllerRefRef_capi.c"
+                            "${ControllerRefRefPath}/ControllerRefRef_capi.h"
+                            "${ControllerRefRefPath}/ControllerRefRef_capi_host.h"
+                            "${ControllerRefRefPath}/ControllerRefRef_private.h"
+                            "${ControllerRefRefPath}/ControllerRefRef_types.h")
+
 # Shared Sources
 set(SharedPath "${CMAKE_CURRENT_SOURCE_DIR}/ec-tlc-playground/slprj/ert/_sharedutils")
 set(SharedSouces "${SharedPath}/builtin_typeid_types.h"
@@ -35,6 +44,7 @@ set(SharedSouces "${SharedPath}/builtin_typeid_types.h"
 
 set(AllIncludes "${ControllerPath}"
                 "${ControllerRefPath}"
+                "${ControllerRefRefPath}"
                 "${ExtraPath}"
                 "${SharedPath}"
                 "${ExtraPath}/rtw/c/src/"
@@ -42,6 +52,7 @@ set(AllIncludes "${ControllerPath}"
 
 set(AllSources "${ControllerSources}"
                "${ControllerRefSources}"
+               "${ControllerRefRefSources}"
                "${SharedSources}")
 #set(CControllerInclude "${AllIncludes}" PARENT_SCOPE)
 
