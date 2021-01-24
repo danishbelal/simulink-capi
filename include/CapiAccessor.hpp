@@ -191,7 +191,7 @@ std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruc
     // TODO: replace with std search algorithm
     for (std::size_t i {}; i < NumElements; ++i)
     {
-        std::string CurrentParameter { db::simulink::GetName(Data, i) };
+        std::string CurrentParameter { db::simulink::GetName<WrappedElement>(MMI, i) };
         if (CurrentParameter == PathAndName)
         {
 #ifdef ENABLE_RUNTIME_TYPE_CHECKING

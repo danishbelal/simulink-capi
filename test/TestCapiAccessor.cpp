@@ -84,7 +84,7 @@ static std::size_t GetAddrMapIndex(const rtwCAPI_ModelMappingInfo& MMI, const st
     const std::size_t NumElements { db::simulink::GetCount<CapiElement>(MMI) };
     for (std::size_t i {}; i < NumElements; ++i)
     {
-        std::string CurrentName { db::simulink::GetName<CapiElement>(CapiInstance, i) };
+        std::string CurrentName { db::simulink::GetName<CapiElement>(MMI, i) };
         if (CurrentName == PathAndName)
         {
             AddrMapIdx = db::simulink::GetAddrIdx(CapiInstance, i);

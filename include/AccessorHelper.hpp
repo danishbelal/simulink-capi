@@ -125,34 +125,6 @@ constexpr std::string GetBlockPath(const CapiElement* const Element, const std::
 }
 
 template <typename CapiElement>
-constexpr std::string GetName(const CapiElement* const Element, const std::size_t Index)
-{
-    static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
-    if constexpr (std::is_same_v<CapiElement, rtwCAPI_States>)
-    {
-        return std::string(Element[Index].blockPath)
-            .append("/")
-            .append(Element[Index].stateName);
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
-    {
-        return std::string(Element[Index].blockPath)
-            .append("/")
-            .append(Element[Index].paramName);
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_ModelParameters>)
-    {
-        return Element[Index].varName;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_Signals>)
-    {
-        return std::string(Element[Index].blockPath)
-            .append("/")
-            .append(Element[Index].signalName);
-    }
-}
-
-template <typename CapiElement>
 constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI) noexcept
 {
     static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
@@ -214,6 +186,46 @@ constexpr const CapiElement* const GetRawData(const rtwCAPI_ModelMappingInfo& MM
     else if constexpr (std::is_same_v<CapiElement, rtwCAPI_SampleTimeMap>)
     {
         return MMI.staticMap->Maps.sampleTimeMap;
+    }
+}
+
+template <typename CapiElement>
+constexpr std::string GetName(const rtwCAPI_ModelMappingInfo& MMI, const std::size_t Index)
+{
+    static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
+
+    const CapiElement* const Element { GetRawData<CapiElement>(MMI) };
+
+    std::string Path {};
+    if constexpr (has_blockpath<CapiElement>())
+    {
+        if (MMI.InstanceMap.path)
+        {
+            Path = MMI.InstanceMap.path;
+            Path.append("/");
+        }
+
+        Path.append(Element[Index].blockPath);
+    }
+
+    if constexpr (std::is_same_v<CapiElement, rtwCAPI_States>)
+    {
+        std::string StateName { Element[Index].stateName };
+        return Path + "/" + StateName;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
+    {
+        std::string ParamName { Element[Index].paramName };
+        return Path += "/" + ParamName;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_ModelParameters>)
+    {
+        return Element[Index].varName;
+    }
+    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_Signals>)
+    {
+        std::string SignalName { Element[Index].signalName };
+        return Path + "/" + SignalName;
     }
 }
 
