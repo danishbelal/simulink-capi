@@ -124,6 +124,9 @@ public:
     /// \internal
     template <typename T>
     std::optional<std::reference_wrapper<T>> FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
+    /// \internal
+    template <typename T>
+    std::optional<std::reference_wrapper<T>> FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
 }; // end of class CapiAccessor.
 
 template <typename WrappedElement, typename ModelStruct>
@@ -146,18 +149,6 @@ std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruc
     std::optional<std::reference_wrapper<T>> Result;
 
     Result = FindInMMI<T>(mMS.DataMapInfo.mmi, PathAndName);
-    if constexpr (has_childmmi_v<ModelStruct>)
-    {
-        // Number of submodels on this level
-        const std::size_t NumModels { mMS.DataMapInfo.mmi.InstanceMap.childMMIArrayLen };
-        if (!Result.has_value() && NumModels > 0)
-        {
-            for (std::size_t i {}; !Result.has_value() && i < NumModels; ++i)
-            {
-                Result = FindInMMI(mMS.DataMapInfo.childMMI[i], PathAndName);
-            }
-        }
-    }
 
     return Result;
 }
@@ -182,6 +173,21 @@ template <typename WrappedElement, typename ModelStruct>
 template <typename T>
 std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct>::FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
 {
+    auto Result { FindInStaticMMI<T>(MMI, PathAndName) };
+
+    const std::size_t NumModels { MMI.InstanceMap.childMMIArrayLen };
+    for (int i {}; !Result.has_value() && i < NumModels; ++i)
+    {
+        Result = FindInMMI<T>(*MMI.InstanceMap.childMMIArray[i], PathAndName);
+    }
+
+    return Result;
+}
+
+template <typename WrappedElement, typename ModelStruct>
+template <typename T>
+std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct>::FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
+{
     std::optional<std::reference_wrapper<T>> Result;
 
     const auto NumElements { db::simulink::GetCount<WrappedElement>(MMI) };
@@ -189,7 +195,7 @@ std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruc
     void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
 
     // TODO: replace with std search algorithm
-    for (std::size_t i {}; i < NumElements; ++i)
+    for (std::size_t i {}; !Result.has_value() && i < NumElements; ++i)
     {
         std::string CurrentParameter { db::simulink::GetName<WrappedElement>(MMI, i) };
         if (CurrentParameter == PathAndName)
