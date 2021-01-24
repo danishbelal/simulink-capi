@@ -224,8 +224,14 @@ constexpr std::string GetName(const rtwCAPI_ModelMappingInfo& MMI, const std::si
     }
     else if constexpr (std::is_same_v<CapiElement, rtwCAPI_Signals>)
     {
+        // Signals have no name, usually. Therefore the Name
+        // and the prepending "/" are only appended if its nonempty.
         std::string SignalName { Element[Index].signalName };
-        return Path + "/" + SignalName;
+        if (!SignalName.empty())
+        {
+            Path = "/" + SignalName;
+        }
+        return Path;
     }
 }
 

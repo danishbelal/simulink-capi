@@ -106,9 +106,9 @@ TEST(TestCapiAccessorInternal, GetAddrMapIndex)
     auto& MMI { ModelStruct.DataMapInfo.mmi };
 
     // Signals
-    auto S1 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/Discrete-Time Integrator/") };
-    auto S2 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/ModelRef1/") };
-    auto S3 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/AlgLoop/") };
+    auto S1 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/Discrete-Time Integrator") };
+    auto S2 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/ModelRef1") };
+    auto S3 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/AlgLoop") };
     EXPECT_EQ(S1, 0);
     EXPECT_EQ(S2, 5);
     EXPECT_EQ(S3, 11);
@@ -342,7 +342,7 @@ TEST(CapiAccessor, SignalGet)
     ResetModel();
 
     constexpr double SetValue { 5.4 };
-    constexpr auto ElemPathAndName { "Controller/Sum/" };
+    constexpr auto ElemPathAndName { "Controller/Sum" };
 
     Signals sigs { ModelStruct };
     auto& Sum { sigs.get<double>(ElemPathAndName) };
@@ -364,7 +364,7 @@ TEST(CapiAccessor, SignalDirect)
     ResetModel();
 
     constexpr double SetValue { 5.4 };
-    constexpr auto ElemPathAndName { "Controller/Sum/" };
+    constexpr auto ElemPathAndName { "Controller/Sum" };
 
     Signals sigs { ModelStruct };
     sigs.get<double>(ElemPathAndName) = SetValue;
@@ -385,7 +385,7 @@ TEST(CapiAccessor, SignalOpt)
     ResetModel();
 
     constexpr double SetValue { 5.4 };
-    constexpr auto ElemPathAndName { "Controller/Sum/" };
+    constexpr auto ElemPathAndName { "Controller/Sum" };
 
     Signals sigs { ModelStruct };
     auto Sum { sigs.opt<double>(ElemPathAndName) };
