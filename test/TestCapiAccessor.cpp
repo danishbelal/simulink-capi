@@ -107,33 +107,31 @@ TEST(TestCapiAccessorInternal, GetAddrMapIndex)
 
     // Signals
     auto S1 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/Discrete-Time Integrator/") };
-    auto S2 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/Model/") };
-    auto S3 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/AlgebraicLoopBreaker/") };
+    auto S2 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/ModelRef1/") };
+    auto S3 { GetAddrMapIndex<rtwCAPI_Signals>(MMI, "Controller/AlgLoop/") };
     EXPECT_EQ(S1, 0);
     EXPECT_EQ(S2, 5);
-    EXPECT_EQ(S3, 9);
+    EXPECT_EQ(S3, 11);
 
     // Blockparameters
     auto BP1 { GetAddrMapIndex<rtwCAPI_BlockParameters>(MMI, "Controller/Constant/Value") };
     auto BP2 { GetAddrMapIndex<rtwCAPI_BlockParameters>(MMI, "Controller/Discrete-Time Integrator/gainval") };
-    auto BP3 { GetAddrMapIndex<rtwCAPI_BlockParameters>(MMI, "Controller/AlgebraicLoopBreaker/InitialCondition") };
-    EXPECT_EQ(BP1, 10);
-    EXPECT_EQ(BP2, 11);
-    EXPECT_EQ(BP3, 16);
+    auto BP3 { GetAddrMapIndex<rtwCAPI_BlockParameters>(MMI, "Controller/AlgLoop/InitialCondition") };
+    EXPECT_EQ(BP1, 12);
+    EXPECT_EQ(BP2, 13);
+    EXPECT_EQ(BP3, 20);
 
     // Modelparameters
-    auto MP1 { GetAddrMapIndex<rtwCAPI_ModelParameters>(MMI, "ModelConfig") };
-    auto MP2 { GetAddrMapIndex<rtwCAPI_ModelParameters>(MMI, "mMatrix") };
-    auto MP3 { GetAddrMapIndex<rtwCAPI_ModelParameters>(MMI, "X4_DD") };
-    EXPECT_EQ(MP1, 19);
-    EXPECT_EQ(MP2, 20);
-    EXPECT_EQ(MP3, 22);
+    auto MP1 { GetAddrMapIndex<rtwCAPI_ModelParameters>(MMI, "mMatrix") };
+    auto MP2 { GetAddrMapIndex<rtwCAPI_ModelParameters>(MMI, "X3_DD") };
+    EXPECT_EQ(MP1, 23);
+    EXPECT_EQ(MP2, 24);
 
     // Blockstates
     auto BS1 { GetAddrMapIndex<rtwCAPI_States>(MMI, "Controller/Discrete-Time\nIntegrator/DSTATE") };
-    auto BS2 { GetAddrMapIndex<rtwCAPI_States>(MMI, "Controller/AlgebraicLoopBreaker/DSTATE") };
-    EXPECT_EQ(BS1, 17);
-    EXPECT_EQ(BS2, 18);
+    auto BS2 { GetAddrMapIndex<rtwCAPI_States>(MMI, "Controller/AlgLoop/DSTATE") };
+    EXPECT_EQ(BS1, 21);
+    EXPECT_EQ(BS2, 22);
 }
 
 /// Test CapiAccessor::get<> for BlockParameters.
