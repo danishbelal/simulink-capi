@@ -40,7 +40,7 @@ extern "C"
 static RT_MODEL_Controller_T ModelStruct;
 static BlockIO_Controller_T BlockSignals;
 static D_Work_Controller_T ModelStates;
-static InstP_Controller_T ModelInstanceParameter = { { { 2.3, 12.3 } } };
+static InstP_Controller_T ModelInstanceParameter;
 
 static ExternalInputs_Controller_T ModelInputs;
 static ExternalOutputs_Controller_T ModelOutputs;
