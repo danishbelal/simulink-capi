@@ -2,6 +2,7 @@
 
 set(TestDir "${CMAKE_CURRENT_SOURCE_DIR}")
 set(TestSources "${TestDir}/TestCapiAccessor.cpp"
+                "${TestDir}/TestCapiAccessorRef.cpp"
                 "${TestDir}/TestCapiAccessorBase.cpp"
                 "${TestDir}/TestCapiAccessorBase.hpp")
 set(TestIncludes "${TestDir}")
