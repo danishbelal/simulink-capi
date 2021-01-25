@@ -93,7 +93,9 @@ static std::size_t GetAddrMapIndex(const rtwCAPI_ModelMappingInfo& MMI, const st
     }
     if (!AddrMapIdx.has_value())
     {
-        throw std::runtime_error("Could not find Parameter");
+        std::string msg { "Could not find " };
+        msg.append(PathAndName);
+        throw std::runtime_error(msg);
     }
     return *AddrMapIdx;
 }
