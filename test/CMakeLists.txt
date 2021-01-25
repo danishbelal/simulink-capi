@@ -1,7 +1,9 @@
 # danishbelal/simulink-capi tests
 
 set(TestDir "${CMAKE_CURRENT_SOURCE_DIR}")
-set(TestSources "${TestDir}/TestCapiAccessor.cpp")
+set(TestSources "${TestDir}/TestCapiAccessor.cpp"
+                "${TestDir}/TestCapiAccessorBase.cpp"
+                "${TestDir}/TestCapiAccessorBase.hpp")
 set(TestIncludes "${TestDir}")
 
 if(SLCAPI_RUN_STATIC_ANALYSIS)
