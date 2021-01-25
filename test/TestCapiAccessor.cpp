@@ -235,7 +235,7 @@ TEST(CapiAccessor, InvalidBlockParameterOpt)
 
 /// Test `CapiAccessor::get` for ModelParameters.
 /// .
-TEST(CapiAccessor, ModelParameterGet)
+TEST(CapiAccessor, DISABLED_ModelParameterGet)
 {
     using WrappedElement = rtwCAPI_ModelParameters;
     ResetModel();
@@ -258,7 +258,7 @@ TEST(CapiAccessor, ModelParameterGet)
 
 /// Test `CapiAccessor::get` for ModelParameters.
 /// .
-TEST(CapiAccessor, ModelParameterDirect)
+TEST(CapiAccessor, DISABLED_ModelParameterDirect)
 {
     using WrappedElement = rtwCAPI_ModelParameters;
     ResetModel();
@@ -280,7 +280,7 @@ TEST(CapiAccessor, ModelParameterDirect)
 
 /// Test `CapiAccessor::opt` for ModelParameters.
 /// .
-TEST(CapiAccessor, ModelParameterOptional)
+TEST(CapiAccessor, DISABLED_ModelParameterOptional)
 {
     using WrappedElement = rtwCAPI_ModelParameters;
     ResetModel();
