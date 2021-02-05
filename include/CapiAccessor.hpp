@@ -24,6 +24,7 @@
 #include <string>
 
 #include "AccessorHelper.hpp"
+#include "CapiError.hpp"
 #include "ModelTraits.hpp"
 
 #ifdef ENABLE_RUNTIME_TYPE_CHECKING
@@ -55,6 +56,10 @@ class CapiAccessor
         "or you didnt enable the C API.");
 
     const ModelStruct& mMS;
+
+#ifndef SLCAPI_USE_EXCEPTIONS
+    CapiError mError;
+#endif
 
 public:
     CapiAccessor(const ModelStruct& MS);
@@ -127,6 +132,12 @@ public:
     /// \internal
     template <typename T>
     std::optional<std::reference_wrapper<T>> FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
+
+    void HandleError(CapiError Error);
+#ifndef SLCAPI_USE_EXCEPTIONS
+    CapiError Error();
+#endif
+
 }; // end of class CapiAccessor.
 
 template <typename WrappedElement, typename ModelStruct>
@@ -163,9 +174,10 @@ T* const CapiAccessor<WrappedElement, ModelStruct>::ptr(const std::string& PathA
         std::ostringstream os;
         os << "Couldn't find Parameter '"
            << PathAndName << "'";
-        throw std::runtime_error(os.str());
-    }
-
+        CapiError Error { os.str(), ErrorType::NotFound };
+        HandleError(Error);
+        return nullptr;
+    };
     return &E.value().get();
 }
 
@@ -211,8 +223,9 @@ std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruc
                 std::ostringstream os;
                 os << "Type mismatch "
                    << "(" << ActualType
-                   << " vs. " << DeducedType << ")\n";
-                throw std::runtime_error(os.str());
+                   << " vs. " << DeducedType;
+                CapiError Error { os.str(), ErrorType::TypeMismatch };
+                HandleError(Error);
             }
 #endif
             const std::size_t AddrIndex { db::simulink::GetAddrIdx(Data, i) };
@@ -221,6 +234,24 @@ std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruc
     }
     return Result;
 }
+
+template <typename WrappedElement, typename ModelStruct>
+void CapiAccessor<WrappedElement, ModelStruct>::HandleError(CapiError Error)
+{
+#ifdef SLCAPI_USE_EXCEPTIONS
+    throw std::runtime_error(Error.Message);
+#else
+    mError = Error;
+#endif
+}
+
+#ifndef SLCAPI_USE_EXCEPTIONS
+template <typename WrappedElement, typename ModelStruct>
+CapiError CapiAccessor<WrappedElement, ModelStruct>::Error()
+{
+    return mError;
+}
+#endif
 
 }
 #endif
