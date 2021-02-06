@@ -128,10 +128,10 @@ public:
 
     /// \internal
     template <typename T>
-    std::optional<std::reference_wrapper<T>> FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
+    T* FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
     /// \internal
     template <typename T>
-    std::optional<std::reference_wrapper<T>> FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
+    T* FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
 
     void HandleError(CapiError Error);
 #ifndef SLCAPI_USE_EXCEPTIONS
@@ -157,9 +157,12 @@ template <typename WrappedElement, typename ModelStruct>
 template <typename T>
 std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct>::opt(const std::string& PathAndName)
 {
+    auto ptr { FindInMMI<T>(mMS.DataMapInfo.mmi, PathAndName) };
     std::optional<std::reference_wrapper<T>> Result;
-
-    Result = FindInMMI<T>(mMS.DataMapInfo.mmi, PathAndName);
+    if (ptr)
+    {
+        Result = *ptr;
+    }
 
     return Result;
 }
@@ -183,12 +186,12 @@ T* const CapiAccessor<WrappedElement, ModelStruct>::ptr(const std::string& PathA
 
 template <typename WrappedElement, typename ModelStruct>
 template <typename T>
-std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct>::FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
+T* CapiAccessor<WrappedElement, ModelStruct>::FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
 {
     auto Result { FindInStaticMMI<T>(MMI, PathAndName) };
 
     const std::size_t NumModels { MMI.InstanceMap.childMMIArrayLen };
-    for (int i {}; !Result.has_value() && i < NumModels; ++i)
+    for (int i {}; Result == nullptr && i < NumModels; ++i)
     {
         Result = FindInMMI<T>(*MMI.InstanceMap.childMMIArray[i], PathAndName);
     }
@@ -198,16 +201,16 @@ std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruc
 
 template <typename WrappedElement, typename ModelStruct>
 template <typename T>
-std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct>::FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
+T* CapiAccessor<WrappedElement, ModelStruct>::FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
 {
-    std::optional<std::reference_wrapper<T>> Result;
+    T* Result { nullptr };
 
     const auto NumElements { db::simulink::GetCount<WrappedElement>(MMI) };
     const auto Data { db::simulink::GetRawData<WrappedElement>(MMI) };
     void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
 
     // TODO: replace with std search algorithm
-    for (std::size_t i {}; !Result.has_value() && i < NumElements; ++i)
+    for (std::size_t i {}; Result == nullptr && i < NumElements; ++i)
     {
         std::string CurrentParameter { db::simulink::GetName<WrappedElement>(MMI, i) };
         if (CurrentParameter == PathAndName)
@@ -229,7 +232,7 @@ std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruc
             }
 #endif
             const std::size_t AddrIndex { db::simulink::GetAddrIdx(Data, i) };
-            Result = *db::simulink::GetDataAddress<T>(AddrMap, AddrIndex);
+            Result = db::simulink::GetDataAddress<T>(AddrMap, AddrIndex);
         }
     }
     return Result;
