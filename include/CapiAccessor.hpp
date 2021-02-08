@@ -22,6 +22,7 @@
 #include <optional>
 #include <sstream>
 #include <string>
+#include <type_traits>
 
 #include "AccessorHelper.hpp"
 #include "CapiError.hpp"
@@ -29,25 +30,27 @@
 
 #ifdef ENABLE_RUNTIME_TYPE_CHECKING
 #include "cleantype.hpp"
-#include <type_traits>
 #endif
 
 namespace db::simulink
 {
 
-template <typename WrappedElement, typename ModelStruct>
+constexpr auto ENABLE_EXCEPTIONS = true;
+constexpr auto DISABLE_EXCEPTIONS = false;
+
+template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
 class CapiAccessor;
 
-template <typename ModelStruct>
-using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters, ModelStruct>;
-template <typename ModelStruct>
-using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters, ModelStruct>;
-template <typename ModelStruct>
-using States = CapiAccessor<rtwCAPI_States, ModelStruct>;
-template <typename ModelStruct>
-using Signals = CapiAccessor<rtwCAPI_Signals, ModelStruct>;
+template <typename ModelStruct, bool ExceptionsEnabled>
+using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters, ModelStruct, ExceptionsEnabled>;
+template <typename ModelStruct, bool ExceptionsEnabled>
+using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters, ModelStruct, ExceptionsEnabled>;
+template <typename ModelStruct, bool ExceptionsEnabled>
+using States = CapiAccessor<rtwCAPI_States, ModelStruct, ExceptionsEnabled>;
+template <typename ModelStruct, bool ExceptionsEnabled>
+using Signals = CapiAccessor<rtwCAPI_Signals, ModelStruct, ExceptionsEnabled>;
 
-template <typename WrappedElement, typename ModelStruct>
+template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
 class CapiAccessor
 {
     static_assert(has_datamapinfo_v<ModelStruct>,
@@ -56,10 +59,7 @@ class CapiAccessor
         "or you didnt enable the C API.");
 
     const ModelStruct& mMS;
-
-#ifndef SLCAPI_USE_EXCEPTIONS
     CapiError mError;
-#endif
 
 public:
     CapiAccessor(const ModelStruct& MS);
@@ -134,28 +134,27 @@ public:
     T* FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
 
     void HandleError(CapiError Error);
-#ifndef SLCAPI_USE_EXCEPTIONS
     CapiError Error();
-#endif
 
 }; // end of class CapiAccessor.
 
-template <typename WrappedElement, typename ModelStruct>
-CapiAccessor<WrappedElement, ModelStruct>::CapiAccessor(const ModelStruct& MS)
+template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
+CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::CapiAccessor(const ModelStruct& MS)
     : mMS(MS)
 {
 }
 
-template <typename WrappedElement, typename ModelStruct>
+template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
 template <typename T>
-T& CapiAccessor<WrappedElement, ModelStruct>::get(const std::string& PathAndName)
+T& CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::get(const std::string& PathAndName)
 {
+    static_assert(ExceptionsEnabled, "CapiAccessor::get() is only available with Exceptions disabled.");
     return *ptr<T>(PathAndName);
 }
 
-template <typename WrappedElement, typename ModelStruct>
+template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
 template <typename T>
-std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct>::opt(const std::string& PathAndName)
+std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::opt(const std::string& PathAndName)
 {
     auto ptr { FindInMMI<T>(mMS.DataMapInfo.mmi, PathAndName) };
     std::optional<std::reference_wrapper<T>> Result;
@@ -167,9 +166,9 @@ std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruc
     return Result;
 }
 
-template <typename WrappedElement, typename ModelStruct>
+template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
 template <typename T>
-T* const CapiAccessor<WrappedElement, ModelStruct>::ptr(const std::string& PathAndName)
+T* const CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::ptr(const std::string& PathAndName)
 {
     auto E { opt<T>(PathAndName) };
     if (!E.has_value())
@@ -184,9 +183,9 @@ T* const CapiAccessor<WrappedElement, ModelStruct>::ptr(const std::string& PathA
     return &E.value().get();
 }
 
-template <typename WrappedElement, typename ModelStruct>
+template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
 template <typename T>
-T* CapiAccessor<WrappedElement, ModelStruct>::FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
+T* CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
 {
     auto Result { FindInStaticMMI<T>(MMI, PathAndName) };
 
@@ -199,9 +198,9 @@ T* CapiAccessor<WrappedElement, ModelStruct>::FindInMMI(const rtwCAPI_ModelMappi
     return Result;
 }
 
-template <typename WrappedElement, typename ModelStruct>
+template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
 template <typename T>
-T* CapiAccessor<WrappedElement, ModelStruct>::FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
+T* CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
 {
     T* Result { nullptr };
 
@@ -238,23 +237,25 @@ T* CapiAccessor<WrappedElement, ModelStruct>::FindInStaticMMI(const rtwCAPI_Mode
     return Result;
 }
 
-template <typename WrappedElement, typename ModelStruct>
-void CapiAccessor<WrappedElement, ModelStruct>::HandleError(CapiError Error)
+template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
+void CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::HandleError(CapiError Error)
 {
-#ifdef SLCAPI_USE_EXCEPTIONS
-    throw std::runtime_error(Error.Message);
-#else
-    mError = Error;
-#endif
+    if constexpr (ExceptionsEnabled)
+    {
+        mError = Error;
+        throw std::runtime_error(Error.Message);
+    }
+    else
+    {
+        mError = Error;
+    }
 }
 
-#ifndef SLCAPI_USE_EXCEPTIONS
-template <typename WrappedElement, typename ModelStruct>
-CapiError CapiAccessor<WrappedElement, ModelStruct>::Error()
+template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
+CapiError CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::Error()
 {
     return mError;
 }
-#endif
 
 }
 #endif

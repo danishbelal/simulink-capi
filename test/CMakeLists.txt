@@ -4,7 +4,8 @@ set(TestDir "${CMAKE_CURRENT_SOURCE_DIR}")
 set(TestSources "${TestDir}/TestCapiAccessor.cpp"
                 "${TestDir}/TestCapiAccessorRef.cpp"
                 "${TestDir}/TestCapiAccessorBase.cpp"
-                "${TestDir}/TestCapiAccessorBase.hpp")
+                "${TestDir}/TestCapiAccessorBase.hpp"
+                "${TestDir}/TestCapiAccessorNoExceptions.cpp")
 set(TestIncludes "${TestDir}")
 
 if(SLCAPI_RUN_STATIC_ANALYSIS)

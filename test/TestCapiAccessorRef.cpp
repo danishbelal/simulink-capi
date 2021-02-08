@@ -40,10 +40,10 @@ protected:
     }
 };
 
-using BlockParameters = db::simulink::BlockParameters<RT_MODEL_Controller_T>;
-using ModelParameters = db::simulink::ModelParameters<RT_MODEL_Controller_T>;
-using States = db::simulink::States<RT_MODEL_Controller_T>;
-using Signals = db::simulink::Signals<RT_MODEL_Controller_T>;
+using BlockParameters = db::simulink::BlockParameters<RT_MODEL_Controller_T, db::simulink::ENABLE_EXCEPTIONS>;
+using ModelParameters = db::simulink::ModelParameters<RT_MODEL_Controller_T, db::simulink::ENABLE_EXCEPTIONS>;
+using States = db::simulink::States<RT_MODEL_Controller_T, db::simulink::ENABLE_EXCEPTIONS>;
+using Signals = db::simulink::Signals<RT_MODEL_Controller_T, db::simulink::ENABLE_EXCEPTIONS>;
 
 TEST_F(TestCapiAccessorRef, BlockParameterGet)
 {
