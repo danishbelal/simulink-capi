@@ -11,7 +11,9 @@
 
 ## Overview
 ```C++
-db::simulink::BlockParameters bp { MMI };
+// Use Blockparameters with Exceptions enabled.
+using BlockParameters = db::simulink::BlockParameters<decltype(ModelStruct), db::simulink::ENABLE_EXCEPTIONS>;
+BlockParameters bp { ModelStruct };
 
 // retrieve a reference
 auto& Gain = bp.get<double>("Controller/Discrete-Time Integrator/gainval");
@@ -20,22 +22,7 @@ Gain = 24.2;
 // or write directly
 bp.get<double>("Controller/Discrete-Time Integrator/gainval") = 13.4;
 ```
-### More Elements
-The same approach can be used for other C-API Elements.
-```C++
-db::simulink::ModelParameters mp { MMI };
-db::simulink::BlockParameters bp { MMI };
-db::simulink::States states { MMI };
-db::simulink::Signals sigs { MMI };
-```
 
-Internally these are defined as follows:
-```C++
-using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters>;
-using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters>;
-using States = CapiAccessor<rtwCAPI_States>;
-using Signals = CapiAccessor<rtwCAPI_Signals>;
-```
 ## Runtime type checking
 Runtime type checking is supported. It can be enabled by `#define ENABLE_RUNTIME_TYPE_CHECKING`.
 Using the wrong type leads to an exception being thrown.
@@ -43,25 +30,16 @@ Using the wrong type leads to an exception being thrown.
 Runtime type checking requires [cleantype](https://github.com/pthom/cleantype).
 Make sure its in your include path.
 ```C++
-db::simulink::BlockParameters bp { MMI };
+using BlockParameters = db::simulink::BlockParameters<decltype(ModelStruct), db::simulink::ENABLE_EXCEPTIONS>;
+BlockParameters bp { ModelStruct };
 
 // double is ok...
 bp.get<double>("Controller/Discrete-Time Integrator/gainval") = 13.4;
 
-// but float is not
-bp.get<int>("Controller/Discrete-Time Integrator/gainval") = 13.4;
+// but int is not
+bp.get<int>("Controller/Discrete-Time Integrator/gainval") = 13;
 ```
 ```console
 terminate called after throwing an instance of 'std::runtime_error'
   what():  Type mismatch (double vs. int)
 ```
-
-## TODO
-- [x] Basic scalar access is working.
-- [ ] Write `Matrix` class to return non-scalars.
-- [ ] Check feasibility of `std::optional<>`
-- [x] Add runtime type checking through introspection using [cleantype](https://github.com/pthom/cleantype)
-- [ ] Write CMake script to easily add generated sources to build.
-- [ ] Check if referenced models cause problems.
-- [ ] Add CMake interface target.
-- [ ] Add `ModelPath` constexpr-class.
