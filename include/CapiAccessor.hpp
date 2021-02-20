@@ -169,7 +169,7 @@ public:
             return *this;
         }
 
-        Iterator& operator++(int)
+        Iterator operator++(int)
         {
             auto tmp { *this };
             ++(*this);
