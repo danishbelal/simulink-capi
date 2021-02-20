@@ -12,7 +12,7 @@
 ## Overview
 ```C++
 // Use Blockparameters with Exceptions enabled.
-using BlockParameters = db::simulink::BlockParameters<decltype(ModelStruct), db::simulink::ENABLE_EXCEPTIONS>;
+using BlockParameters = db::simulink::BlockParameters<decltype(ModelStruct)>;
 BlockParameters bp { ModelStruct };
 
 // retrieve a reference
@@ -30,7 +30,7 @@ Using the wrong type leads to an exception being thrown.
 Runtime type checking requires [cleantype](https://github.com/pthom/cleantype).
 Make sure its in your include path.
 ```C++
-using BlockParameters = db::simulink::BlockParameters<decltype(ModelStruct), db::simulink::ENABLE_EXCEPTIONS>;
+using BlockParameters = db::simulink::BlockParameters<decltype(ModelStruct)>;
 BlockParameters bp { ModelStruct };
 
 // double is ok...

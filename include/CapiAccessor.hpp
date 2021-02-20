@@ -41,13 +41,13 @@ constexpr auto DISABLE_EXCEPTIONS = false;
 template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
 class CapiAccessor;
 
-template <typename ModelStruct, bool ExceptionsEnabled>
+template <typename ModelStruct, bool ExceptionsEnabled = ENABLE_EXCEPTIONS>
 using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters, ModelStruct, ExceptionsEnabled>;
-template <typename ModelStruct, bool ExceptionsEnabled>
+template <typename ModelStruct, bool ExceptionsEnabled = ENABLE_EXCEPTIONS>
 using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters, ModelStruct, ExceptionsEnabled>;
-template <typename ModelStruct, bool ExceptionsEnabled>
+template <typename ModelStruct, bool ExceptionsEnabled = ENABLE_EXCEPTIONS>
 using States = CapiAccessor<rtwCAPI_States, ModelStruct, ExceptionsEnabled>;
-template <typename ModelStruct, bool ExceptionsEnabled>
+template <typename ModelStruct, bool ExceptionsEnabled = ENABLE_EXCEPTIONS>
 using Signals = CapiAccessor<rtwCAPI_Signals, ModelStruct, ExceptionsEnabled>;
 
 template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
