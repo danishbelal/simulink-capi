@@ -33,7 +33,7 @@ extern "C"
 class TestCapiAccessorRef : public TestCapiAccessorBase
 {
 protected:
-    const rtwCAPI_ModelMappingInfo& MMI() const override
+    rtwCAPI_ModelMappingInfo& MMI() override
     {
         assert(ModelStruct.DataMapInfo.mmi.InstanceMap.childMMIArrayLen > 0);
         return *ModelStruct.DataMapInfo.mmi.InstanceMap.childMMIArray[0];

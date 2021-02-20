@@ -147,7 +147,7 @@ constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI) noexcept
 }
 
 template <typename CapiElement>
-constexpr const CapiElement* const GetRawData(const rtwCAPI_ModelMappingInfo& MMI) noexcept
+constexpr const CapiElement* GetRawData(rtwCAPI_ModelMappingInfo& MMI) noexcept
 {
     constexpr bool ValidElement = is_capi_element<CapiElement>() || is_capi_map<CapiElement>();
     static_assert(ValidElement, "Incompatible C-API Element!");
@@ -190,7 +190,7 @@ constexpr const CapiElement* const GetRawData(const rtwCAPI_ModelMappingInfo& MM
 }
 
 template <typename CapiElement>
-constexpr std::string GetName(const rtwCAPI_ModelMappingInfo& MMI, const std::size_t Index)
+constexpr std::string GetName(rtwCAPI_ModelMappingInfo& MMI, const std::size_t Index)
 {
     static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
 

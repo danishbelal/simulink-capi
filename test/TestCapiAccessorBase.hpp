@@ -44,7 +44,7 @@ protected:
     virtual ~TestCapiAccessorBase();
     void ResetModel();
 
-    virtual const rtwCAPI_ModelMappingInfo& MMI() const = 0;
+    virtual rtwCAPI_ModelMappingInfo& MMI() = 0;
 
     // All the tests need to compare the result of the provided accessor to
     // the "actual" value.  Retrieving the actual value requires searching the

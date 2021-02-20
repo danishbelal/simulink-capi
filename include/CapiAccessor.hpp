@@ -58,11 +58,11 @@ class CapiAccessor
         "If it doesnt have one, its either not a Model Structure, "
         "or you didnt enable the C API.");
 
-    const ModelStruct& mMS;
+    ModelStruct& mMS;
     CapiError mError;
 
 public:
-    CapiAccessor(const ModelStruct& MS);
+    CapiAccessor(ModelStruct& MS);
 
     /// Returns a reference to the element.
     ///
@@ -128,10 +128,10 @@ public:
 
     /// \internal
     template <typename T>
-    T* FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
+    T* FindInMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
     /// \internal
     template <typename T>
-    T* FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
+    T* FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
 
     void HandleError(CapiError Error);
     CapiError Error();
@@ -139,7 +139,7 @@ public:
 }; // end of class CapiAccessor.
 
 template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
-CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::CapiAccessor(const ModelStruct& MS)
+CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::CapiAccessor(ModelStruct& MS)
     : mMS(MS)
 {
 }
@@ -185,7 +185,7 @@ T* const CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::ptr(const
 
 template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
 template <typename T>
-T* CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::FindInMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
+T* CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::FindInMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
 {
     auto Result { FindInStaticMMI<T>(MMI, PathAndName) };
 
@@ -200,7 +200,7 @@ T* CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::FindInMMI(const
 
 template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled>
 template <typename T>
-T* CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::FindInStaticMMI(const rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
+T* CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled>::FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
 {
     T* Result { nullptr };
 

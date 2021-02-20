@@ -33,7 +33,7 @@ extern "C"
 class TestCapiAccessor : public TestCapiAccessorBase
 {
 protected:
-    const rtwCAPI_ModelMappingInfo& MMI() const override
+    rtwCAPI_ModelMappingInfo& MMI() override
     {
         return ModelStruct.DataMapInfo.mmi;
     }
