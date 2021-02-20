@@ -19,6 +19,7 @@
 
 #include <exception>
 #include <functional>
+#include <iterator>
 #include <optional>
 #include <sstream>
 #include <string>
@@ -135,6 +136,73 @@ public:
 
     void HandleError(CapiError Error);
     CapiError Error();
+
+    // This Iterator can only be used in the current Model.
+    // It does *NOT* search possibly referenced Submodels.
+    class Iterator
+    {
+    public:
+        using iterator_category = std::forward_iterator_tag;
+        using difference_type = void;
+        using value_type = const WrappedElement;
+        using pointer = value_type*;
+        using reference = value_type&;
+
+        Iterator(const WrappedElement* const Elements)
+            : mCurrentElement(Elements)
+        {
+        }
+
+        reference operator*() const
+        {
+            return *mCurrentElement;
+        }
+
+        pointer operator->() const
+        {
+            return mCurrentElement;
+        }
+
+        Iterator& operator++()
+        {
+            mCurrentElement++;
+            return *this;
+        }
+
+        Iterator& operator++(int)
+        {
+            auto tmp { *this };
+            ++(*this);
+            return tmp;
+        }
+
+        friend bool operator==(const Iterator& a, const Iterator& b)
+        {
+            return a.mCurrentElement == b.mCurrentElement;
+        }
+
+        friend bool operator!=(const Iterator& a, const Iterator& b)
+        {
+            return a.mCurrentElement != b.mCurrentElement;
+        }
+
+    private:
+        pointer mCurrentElement;
+    };
+
+    Iterator begin()
+    {
+        auto& MMI { mMS.DataMapInfo.mmi };
+        auto RawData { GetRawData<WrappedElement>(MMI) };
+        return Iterator(RawData);
+    }
+
+    Iterator end()
+    {
+        auto& MMI { mMS.DataMapInfo.mmi };
+        auto RawData { GetRawData<WrappedElement>(MMI) + GetCount<WrappedElement>(MMI) };
+        return Iterator(RawData);
+    }
 
 }; // end of class CapiAccessor.
 
