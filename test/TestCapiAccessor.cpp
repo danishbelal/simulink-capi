@@ -16,8 +16,6 @@
 
 // \file
 
-#define ENABLE_RUNTIME_TYPE_CHECKING
-
 #include "CapiAccessor.hpp"
 #include "TestCapiAccessorBase.hpp"
 #include "gtest/gtest.h"

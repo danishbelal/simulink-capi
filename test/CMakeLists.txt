@@ -15,8 +15,8 @@ endif()
 
 add_subdirectory(Controller)
 
-add_executable(Tests "${TestSources}" "${ExtSources}")
-target_include_directories(Tests PUBLIC "${LibDir}" "${ExtDir}")
+add_executable(Tests "${TestSources}")
+target_include_directories(Tests PUBLIC "${LibDir}")
 target_link_libraries(Tests PUBLIC gtest_main Controller SimulinkCAPI)
 
 gtest_discover_tests(Tests)
