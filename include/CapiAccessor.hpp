@@ -186,8 +186,8 @@ public:
     Iterator end()
     {
         auto& MMI { mMS.DataMapInfo.mmi };
-        auto RawData { GetRawData<WrappedElement>(MMI) + GetCount<WrappedElement>(MMI) };
-        return Iterator(RawData);
+        auto RawData { GetRawData<WrappedElement>(MMI) };
+        return Iterator(RawData + GetCount<WrappedElement>(MMI));
     }
 
 }; // end of class CapiAccessor.
