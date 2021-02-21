@@ -113,23 +113,6 @@ public:
     template <typename T>
     inline T* const ptr(const std::string& Name);
 
-    /// Returns an `optional` that might contain a reference to the desired
-    /// element.
-    ///
-    /// This does not throw an exception if the denoted element does not exist.
-    /// In this case an empty `std::optional` will be returned. This must be
-    /// explicitly checked by using `has_value()` (see example below).
-    /// \code{.cpp}
-    /// db::simulink::BlockParameters bp { ModelStruct };
-    /// auto Opt { bp.opt<double>("Controller/Discrete-Time Integrator/gainval") };
-    /// ASSERT(Opt.has_value());
-    /// Opt->get() = 23.35;
-    /// \endcode
-    /// \see get()
-    /// \see ptr()
-    template <typename T>
-    std::optional<std::reference_wrapper<T>> opt(const std::string& PathAndName);
-
     /// \internal
     template <typename T>
     T* FindInMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
@@ -221,29 +204,6 @@ T& CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled, TypeCheckingEnab
 {
     static_assert(ExceptionsEnabled, "CapiAccessor::get() is only available with Exceptions disabled.");
     return *ptr<T>(PathAndName);
-}
-
-template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled, bool TypeCheckingEnabled>
-template <typename T>
-std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled, TypeCheckingEnabled>::opt(const std::string& PathAndName)
-{
-    T* p {};
-
-    // temporary workaround
-    try
-    {
-        p = ptr<T>(PathAndName);
-    }
-    catch (...)
-    {
-    }
-    std::optional<std::reference_wrapper<T>> Result;
-    if (p)
-    {
-        Result = *p;
-    }
-
-    return Result;
 }
 
 template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled, bool TypeCheckingEnabled>

@@ -119,28 +119,6 @@ TEST_F(TestCapiAccessor, BlockParameterDirect)
     EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
 }
 
-/// Test `CapiAccessor::opt` for BlockParameters.
-/// .
-TEST_F(TestCapiAccessor, BlockParameterOptional)
-{
-    using WrappedElement = rtwCAPI_BlockParameters;
-
-    constexpr double SetValue { 123.456 };
-    constexpr auto ElemPath { "Controller/Discrete-Time Integrator/gainval" };
-
-    BlockParameters bp { ModelStruct };
-    auto Opt { bp.opt<double>(ElemPath) };
-    ASSERT_TRUE(Opt.has_value()) << "Element not found";
-    Opt->get() = SetValue;
-
-    // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ElemPath) };
-    double* Gain2 { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
-
-    EXPECT_DOUBLE_EQ(SetValue, *Gain2) << "Parameter could not be set";
-}
-
 /// Test `CapiAccessor::get` for invalid BlockParameters.
 /// .
 TEST_F(TestCapiAccessor, InvalidBlockParameterGet)
@@ -157,17 +135,6 @@ TEST_F(TestCapiAccessor, InvalidBlockParameterPtr)
 
     BlockParameters bp { ModelStruct };
     EXPECT_THROW(auto ptr { bp.ptr<double>("does/not/exist") }, std::runtime_error);
-}
-
-/// Test `CapiAccessor::opt` for invalid BlockParameters.
-/// .
-TEST_F(TestCapiAccessor, InvalidBlockParameterOpt)
-{
-
-    BlockParameters bp { ModelStruct };
-    auto Opt { bp.opt<double>("does/not/exist") };
-    EXPECT_FALSE(Opt.has_value());
-    EXPECT_FALSE(Opt);
 }
 
 /// Test `CapiAccessor::get` for ModelParameters.
@@ -213,29 +180,6 @@ TEST_F(TestCapiAccessor, DISABLED_ModelParameterDirect)
     EXPECT_DOUBLE_EQ(SetValue.SomeOtherMember, Actual->SomeOtherMember) << "Parameter could not be set";
 }
 
-/// Test `CapiAccessor::opt` for ModelParameters.
-/// .
-TEST_F(TestCapiAccessor, DISABLED_ModelParameterOptional)
-{
-    using WrappedElement = rtwCAPI_ModelParameters;
-
-    constexpr ConfigBus SetValue { 23.6, 12.3 };
-    constexpr auto ElemName { "ModelConfig" };
-
-    ModelParameters bp { ModelStruct };
-    auto Opt { bp.opt<ConfigBus>(ElemName) };
-    ASSERT_TRUE(Opt.has_value()) << "Element not found";
-    Opt->get() = SetValue;
-
-    // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ElemName) };
-    auto* Actual { static_cast<ConfigBus*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
-
-    EXPECT_DOUBLE_EQ(SetValue.Gain, Actual->Gain) << "Parameter could not be set";
-    EXPECT_DOUBLE_EQ(SetValue.SomeOtherMember, Actual->SomeOtherMember) << "Parameter could not be set";
-}
-
 /// Test `CapiAccessor::get` for invalid ModelParameters.
 /// .
 TEST_F(TestCapiAccessor, InvalidModelParameterGet)
@@ -252,17 +196,6 @@ TEST_F(TestCapiAccessor, InvalidModelParameterPtr)
 
     ModelParameters mp { ModelStruct };
     EXPECT_THROW(auto ptr { mp.ptr<double>("does-not-exist") }, std::runtime_error);
-}
-
-/// Test `CapiAccessor::opt` for invalid ModelParameters.
-/// .
-TEST_F(TestCapiAccessor, InvalidModelParameterOpt)
-{
-
-    ModelParameters mp { ModelStruct };
-    auto Opt { mp.opt<double>("does-not-exist") };
-    EXPECT_FALSE(Opt.has_value());
-    EXPECT_FALSE(Opt);
 }
 
 /// Test `CapiAccessor::get` for Signals.
@@ -306,28 +239,6 @@ TEST_F(TestCapiAccessor, SignalDirect)
     EXPECT_DOUBLE_EQ(SetValue, *Actual) << "Parameter could not be set";
 }
 
-/// Test `CapiAccessor::opt` for Signals.
-/// .
-TEST_F(TestCapiAccessor, SignalOpt)
-{
-    using WrappedElement = rtwCAPI_Signals;
-
-    constexpr double SetValue { 5.4 };
-    constexpr auto ElemPathAndName { "Controller/Sum" };
-
-    Signals sigs { ModelStruct };
-    auto Sum { sigs.opt<double>(ElemPathAndName) };
-    ASSERT_TRUE(Sum.has_value());
-    Sum->get() = SetValue;
-
-    // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
-    auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ElemPathAndName) };
-    auto* Actual { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
-
-    EXPECT_DOUBLE_EQ(SetValue, *Actual) << "Parameter could not be set";
-}
-
 /// Test `CapiAccessor::get` for invalid Signals.
 /// .
 TEST_F(TestCapiAccessor, InvalidSignalGet)
@@ -342,14 +253,4 @@ TEST_F(TestCapiAccessor, InvalidSignalDirect)
 {
     Signals sigs { ModelStruct };
     EXPECT_THROW(auto ptr { sigs.ptr<double>("does-not-exist") }, std::runtime_error);
-}
-
-/// Test `CapiAccessor::opt` for invalid Signals.
-/// .
-TEST_F(TestCapiAccessor, InvalidSignalOpt)
-{
-    Signals sigs { ModelStruct };
-    auto Opt { sigs.opt<double>("does-not-exist") };
-    EXPECT_FALSE(Opt.has_value());
-    EXPECT_FALSE(Opt);
 }
