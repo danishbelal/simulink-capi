@@ -5,7 +5,8 @@ set(TestSources "${TestDir}/TestCapiAccessor.cpp"
                 "${TestDir}/TestCapiAccessorRef.cpp"
                 "${TestDir}/TestCapiAccessorBase.cpp"
                 "${TestDir}/TestCapiAccessorBase.hpp"
-                "${TestDir}/TestCapiAccessorNoExceptions.cpp")
+                "${TestDir}/TestCapiAccessorNoExceptions.cpp"
+                "${TestDir}/TestBusBuilder.cpp")
 set(TestIncludes "${TestDir}")
 
 if(SLCAPI_RUN_STATIC_ANALYSIS)
