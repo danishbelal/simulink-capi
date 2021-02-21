@@ -24,6 +24,34 @@ bp.get<double>("Controller/Discrete-Time Integrator/gainval") = 13.4;
 
 This works the same for Signals, States and ModelParameters.
 
+## Member-wise Bus access
+Members can be accessed without instantiating and writing the whole Bus at once.
+
+The recommended way to write Busses is like follows:
+```C++
+using namespace db::simulink;
+ModelParameters mp { MMI(ModelStruct) };
+
+// create new value
+ConfigBus config {};
+config.Gain = 1.23;
+config.SomeOtherMember = 12.3;
+
+// write the value to the model.
+mp.get<ConfigBus>("Controller/ModelRef1/SubmodelConfig") = config;
+```
+
+However, in some circumstances it can be beneficial to access it member wise like this:
+```C++
+using namespace db::simulink;
+BlockParameterBusBuilder bb(MMI(ModelStruct), "Controller/ModelRef1/SubmodelConfig");
+bb.get<double>("Gain") = 1.23;
+bb.get<double>("SomeOtherMember") = 12.3;
+```
+This approach requires less type information. Therefore its easier to obtain
+new parameter values through deserialization as no `ConfigBus` objects need
+to be created.
+
 ## Runtime type checking
 Runtime type checking is supported. It can be enabled by `#define ENABLE_RUNTIME_TYPE_CHECKING`.
 Using the wrong type leads to an exception being thrown.
