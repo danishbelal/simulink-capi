@@ -227,11 +227,20 @@ template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled,
 template <typename T>
 std::optional<std::reference_wrapper<T>> CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled, TypeCheckingEnabled>::opt(const std::string& PathAndName)
 {
-    auto ptr { FindInMMI<T>(mMS.DataMapInfo.mmi, PathAndName) };
-    std::optional<std::reference_wrapper<T>> Result;
-    if (ptr)
+    T* p {};
+
+    // temporary workaround
+    try
     {
-        Result = *ptr;
+        p = ptr<T>(PathAndName);
+    }
+    catch (...)
+    {
+    }
+    std::optional<std::reference_wrapper<T>> Result;
+    if (p)
+    {
+        Result = *p;
     }
 
     return Result;
@@ -241,8 +250,8 @@ template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled,
 template <typename T>
 T* const CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled, TypeCheckingEnabled>::ptr(const std::string& PathAndName)
 {
-    auto E { opt<T>(PathAndName) };
-    if (!E.has_value())
+    auto E { FindInMMI<T>(mMS.DataMapInfo.mmi, PathAndName) };
+    if (E == nullptr)
     {
         std::ostringstream os;
         os << "Couldn't find Parameter '"
@@ -251,7 +260,7 @@ T* const CapiAccessor<WrappedElement, ModelStruct, ExceptionsEnabled, TypeChecki
         HandleError(Error);
         return nullptr;
     };
-    return &E.value().get();
+    return E;
 }
 
 template <typename WrappedElement, typename ModelStruct, bool ExceptionsEnabled, bool TypeCheckingEnabled>
