@@ -30,7 +30,20 @@
 
 namespace db::simulink
 {
-template <typename CapiElement, bool EnableExceptions = true>
+
+template <typename CapiElement, bool EnableExceptions>
+class BusBuilder;
+
+template <bool EnableExceptions = true>
+using BlockParameterBusBuilder = BusBuilder<rtwCAPI_BlockParameters, EnableExceptions>;
+template <bool EnableExceptions = true>
+using ModelParameterBusBuilder = BusBuilder<rtwCAPI_ModelParameters, EnableExceptions>;
+template <bool EnableExceptions = true>
+using StateBusBuilder = BusBuilder<rtwCAPI_States, EnableExceptions>;
+template <bool EnableExceptions = true>
+using SignalBusBuilder = BusBuilder<rtwCAPI_Signals, EnableExceptions>;
+
+template <typename CapiElement, bool EnableExceptions>
 class BusBuilder
 {
     static_assert(is_capi_element<CapiElement>(), "Invalid C-API Element!");

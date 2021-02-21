@@ -30,7 +30,7 @@ extern "C"
 #include "Controller.h"
 }
 
-using BlockParameterBusBuilder = db::simulink::BusBuilder<rtwCAPI_BlockParameters>;
+using BlockParameterBusBuilder = db::simulink::BlockParameterBusBuilder<>;
 
 class TestBusBuilder : public TestCapiAccessorBase
 {
