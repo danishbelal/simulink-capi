@@ -37,10 +37,10 @@ protected:
     }
 };
 
-using BlockParameters = db::simulink::BlockParameters<RT_MODEL_Controller_T, db::simulink::DISABLE_EXCEPTIONS>;
-using ModelParameters = db::simulink::ModelParameters<RT_MODEL_Controller_T, db::simulink::DISABLE_EXCEPTIONS>;
-using States = db::simulink::States<RT_MODEL_Controller_T, db::simulink::DISABLE_EXCEPTIONS>;
-using Signals = db::simulink::Signals<RT_MODEL_Controller_T, db::simulink::DISABLE_EXCEPTIONS>;
+using BlockParameters = db::simulink::BlockParameters<db::simulink::DISABLE_EXCEPTIONS>;
+using ModelParameters = db::simulink::ModelParameters<db::simulink::DISABLE_EXCEPTIONS>;
+using States = db::simulink::States<db::simulink::DISABLE_EXCEPTIONS>;
+using Signals = db::simulink::Signals<db::simulink::DISABLE_EXCEPTIONS>;
 
 /// Verify the internal GetAddrMapIndex Function against some
 /// magic numbers.
@@ -82,7 +82,7 @@ TEST_F(TestCapiAccessorNoExceptions, InternalGetAddrMapIndex)
 TEST_F(TestCapiAccessorNoExceptions, InvalidBlockParameterPtr)
 {
 
-    BlockParameters bp { ModelStruct };
+    BlockParameters bp { MMI() };
     auto ptr { bp.ptr<double>("does/not/exist") };
     EXPECT_EQ(bp.Error().Cause, db::simulink::ErrorType::NotFound);
 }
@@ -92,7 +92,7 @@ TEST_F(TestCapiAccessorNoExceptions, InvalidBlockParameterPtr)
 TEST_F(TestCapiAccessorNoExceptions, InvalidModelParameterPtr)
 {
 
-    ModelParameters mp { ModelStruct };
+    ModelParameters mp { MMI() };
     mp.ptr<double>("does-not-exist");
     EXPECT_EQ(mp.Error().Cause, db::simulink::ErrorType::NotFound);
 }

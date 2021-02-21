@@ -38,10 +38,10 @@ protected:
     }
 };
 
-using BlockParameters = db::simulink::BlockParameters<RT_MODEL_Controller_T>;
-using ModelParameters = db::simulink::ModelParameters<RT_MODEL_Controller_T>;
-using States = db::simulink::States<RT_MODEL_Controller_T>;
-using Signals = db::simulink::Signals<RT_MODEL_Controller_T>;
+using BlockParameters = db::simulink::BlockParameters<>;
+using ModelParameters = db::simulink::ModelParameters<>;
+using States = db::simulink::States<>;
+using Signals = db::simulink::Signals<>;
 
 TEST_F(TestCapiAccessorRef, BlockParameterGet)
 {
@@ -50,7 +50,7 @@ TEST_F(TestCapiAccessorRef, BlockParameterGet)
     constexpr double SetValue { 123.456 };
     constexpr auto ElemPath { "Controller/ModelRef1/ControllerRef/NormalGain/Gain" };
 
-    BlockParameters bp { ModelStruct };
+    BlockParameters bp { MMI() };
     auto& Gain { bp.get<double>(ElemPath) };
     Gain = SetValue;
 

@@ -25,6 +25,8 @@
 #include <string>
 #include <type_traits>
 
+#include "ModelTraits.hpp"
+
 namespace db::simulink
 {
 /// Typetrait to check if the given type is a C-API Element.
@@ -253,6 +255,15 @@ constexpr T* GetDataAddress(void* const* const AddrMap, std::size_t Index) noexc
 {
     return static_cast<T*>(AddrMap[Index]);
 }
-}
 
+template <typename ModelStruct>
+constexpr rtwCAPI_ModelMappingInfo& MMI(ModelStruct& MS) noexcept
+{
+    static_assert(has_datamapinfo_v<ModelStruct>,
+        "The Model Structure needs to have a DataMapInfo Member."
+        "If it doesnt have one, its either not a Model Structure, "
+        "or you didnt enable the C API.");
+    return MS.DataMapInfo.mmi;
+}
+}
 #endif

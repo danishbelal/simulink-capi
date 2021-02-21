@@ -37,10 +37,10 @@ protected:
     }
 };
 
-using BlockParameters = db::simulink::BlockParameters<RT_MODEL_Controller_T>;
-using ModelParameters = db::simulink::ModelParameters<RT_MODEL_Controller_T>;
-using States = db::simulink::States<RT_MODEL_Controller_T>;
-using Signals = db::simulink::Signals<RT_MODEL_Controller_T>;
+using BlockParameters = db::simulink::BlockParameters<>;
+using ModelParameters = db::simulink::ModelParameters<>;
+using States = db::simulink::States<>;
+using Signals = db::simulink::Signals<>;
 
 /// Verify the internal GetAddrMapIndex Function against some
 /// magic numbers.
@@ -86,12 +86,12 @@ TEST_F(TestCapiAccessor, BlockParameterGet)
     constexpr double SetValue { 123.456 };
     constexpr auto ElemPath { "Controller/Discrete-Time Integrator/gainval" };
 
-    BlockParameters bp { ModelStruct };
+    BlockParameters bp { MMI() };
     auto& Gain { bp.get<double>(ElemPath) };
     Gain = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI()) };
     // Search for the AddressMap Index.
     auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ElemPath) };
     double* Gain2 { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
@@ -108,11 +108,11 @@ TEST_F(TestCapiAccessor, BlockParameterDirect)
     constexpr double SetValue { 123.456 };
     constexpr auto ElemPath { "Controller/Discrete-Time Integrator/gainval" };
 
-    BlockParameters bp { ModelStruct };
+    BlockParameters bp { MMI() };
     bp.get<double>(ElemPath) = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI()) };
     auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ElemPath) };
     double* Gain2 { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
@@ -124,7 +124,7 @@ TEST_F(TestCapiAccessor, BlockParameterDirect)
 TEST_F(TestCapiAccessor, InvalidBlockParameterGet)
 {
 
-    BlockParameters bp { ModelStruct };
+    BlockParameters bp { MMI() };
     EXPECT_THROW(auto& ref { bp.get<double>("does/not/exist") }, std::runtime_error);
 }
 
@@ -133,7 +133,7 @@ TEST_F(TestCapiAccessor, InvalidBlockParameterGet)
 TEST_F(TestCapiAccessor, InvalidBlockParameterPtr)
 {
 
-    BlockParameters bp { ModelStruct };
+    BlockParameters bp { MMI() };
     EXPECT_THROW(auto ptr { bp.ptr<double>("does/not/exist") }, std::runtime_error);
 }
 
@@ -146,12 +146,12 @@ TEST_F(TestCapiAccessor, DISABLED_ModelParameterGet)
     constexpr ConfigBus SetValue { 23.6, 12.3 };
     constexpr auto ElemName { "ModelConfig" };
 
-    ModelParameters bp { ModelStruct };
+    ModelParameters bp { MMI() };
     auto& Config { bp.get<ConfigBus>(ElemName) };
     Config = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI()) };
     auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ElemName) };
     auto* Actual { static_cast<ConfigBus*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
@@ -168,11 +168,11 @@ TEST_F(TestCapiAccessor, DISABLED_ModelParameterDirect)
     constexpr ConfigBus SetValue { 23.6, 12.3 };
     constexpr auto ElemName { "ModelConfig" };
 
-    ModelParameters bp { ModelStruct };
+    ModelParameters bp { MMI() };
     bp.get<ConfigBus>(ElemName) = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI()) };
     auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ElemName) };
     auto* Actual { static_cast<ConfigBus*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
@@ -185,7 +185,7 @@ TEST_F(TestCapiAccessor, DISABLED_ModelParameterDirect)
 TEST_F(TestCapiAccessor, InvalidModelParameterGet)
 {
 
-    ModelParameters mp { ModelStruct };
+    ModelParameters mp { MMI() };
     EXPECT_THROW(auto& ref { mp.get<double>("does-not-exist") }, std::runtime_error);
 }
 
@@ -194,7 +194,7 @@ TEST_F(TestCapiAccessor, InvalidModelParameterGet)
 TEST_F(TestCapiAccessor, InvalidModelParameterPtr)
 {
 
-    ModelParameters mp { ModelStruct };
+    ModelParameters mp { MMI() };
     EXPECT_THROW(auto ptr { mp.ptr<double>("does-not-exist") }, std::runtime_error);
 }
 
@@ -207,12 +207,12 @@ TEST_F(TestCapiAccessor, SignalGet)
     constexpr double SetValue { 5.4 };
     constexpr auto ElemPathAndName { "Controller/Sum" };
 
-    Signals sigs { ModelStruct };
+    Signals sigs { MMI() };
     auto& Sum { sigs.get<double>(ElemPathAndName) };
     Sum = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI()) };
     auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ElemPathAndName) };
     auto* Actual { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
@@ -228,11 +228,11 @@ TEST_F(TestCapiAccessor, SignalDirect)
     constexpr double SetValue { 5.4 };
     constexpr auto ElemPathAndName { "Controller/Sum" };
 
-    Signals sigs { ModelStruct };
+    Signals sigs { MMI() };
     sigs.get<double>(ElemPathAndName) = SetValue;
 
     // Check if the parameter was actually written
-    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&ModelStruct.DataMapInfo.mmi) };
+    void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI()) };
     auto AddrMapIdx { GetAddrMapIndex<WrappedElement>(ElemPathAndName) };
     auto* Actual { static_cast<double*>(rtwCAPI_GetDataAddress(AddrMap, AddrMapIdx)) };
 
@@ -243,7 +243,7 @@ TEST_F(TestCapiAccessor, SignalDirect)
 /// .
 TEST_F(TestCapiAccessor, InvalidSignalGet)
 {
-    Signals sigs { ModelStruct };
+    Signals sigs { MMI() };
     EXPECT_THROW(auto& ref { sigs.get<double>("does-not-exist") }, std::runtime_error);
 }
 
@@ -251,6 +251,6 @@ TEST_F(TestCapiAccessor, InvalidSignalGet)
 /// .
 TEST_F(TestCapiAccessor, InvalidSignalDirect)
 {
-    Signals sigs { ModelStruct };
+    Signals sigs { MMI() };
     EXPECT_THROW(auto ptr { sigs.ptr<double>("does-not-exist") }, std::runtime_error);
 }

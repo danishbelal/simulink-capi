@@ -30,7 +30,7 @@ extern "C"
 #include "Controller.h"
 }
 
-using BlockParameterBusBuilder = db::simulink::BusBuilder<rtwCAPI_BlockParameters, RT_MODEL_Controller_T>;
+using BlockParameterBusBuilder = db::simulink::BusBuilder<rtwCAPI_BlockParameters>;
 
 class TestBusBuilder : public TestCapiAccessorBase
 {
@@ -46,7 +46,7 @@ TEST_F(TestBusBuilder, BlockParameterBusBuilder)
     constexpr ConfigBus SetValue { 1.1, 13.2 };
     constexpr char Path[] { "Controller/ModelRef1/SubmodelConfig" };
 
-    BlockParameterBusBuilder bb(ModelStruct, Path);
+    BlockParameterBusBuilder bb(MMI(), Path);
     bb.get<double>("Gain") = SetValue.Gain;
     bb.get<double>("SomeOtherMember") = SetValue.SomeOtherMember;
 
@@ -66,7 +66,7 @@ TEST_F(TestBusBuilder, BlockParameterBusBuilder)
 TEST_F(TestBusBuilder, ForEach)
 {
     constexpr char Path[] { "Controller/ModelRef1/SubmodelConfig" };
-    BlockParameterBusBuilder bb(ModelStruct, Path);
+    BlockParameterBusBuilder bb(MMI(), Path);
 
     std::vector<std::string> MemberNames;
 

@@ -11,9 +11,8 @@
 
 ## Overview
 ```C++
-// Use Blockparameters with Exceptions enabled.
-using BlockParameters = db::simulink::BlockParameters<decltype(ModelStruct)>;
-BlockParameters bp { ModelStruct };
+using namespace db::simulink;
+BlockParameters bp { MMI(ModelStruct) };
 
 // retrieve a reference
 auto& Gain = bp.get<double>("Controller/Discrete-Time Integrator/gainval");
@@ -23,6 +22,8 @@ Gain = 24.2;
 bp.get<double>("Controller/Discrete-Time Integrator/gainval") = 13.4;
 ```
 
+This works the same for Signals, States and ModelParameters.
+
 ## Runtime type checking
 Runtime type checking is supported. It can be enabled by `#define ENABLE_RUNTIME_TYPE_CHECKING`.
 Using the wrong type leads to an exception being thrown.
@@ -30,8 +31,8 @@ Using the wrong type leads to an exception being thrown.
 Runtime type checking requires [cleantype](https://github.com/pthom/cleantype).
 Make sure its in your include path.
 ```C++
-using BlockParameters = db::simulink::BlockParameters<decltype(ModelStruct)>;
-BlockParameters bp { ModelStruct };
+using namespace db::simulink;
+BlockParameters bp { MMI(ModelStruct) };
 
 // double is ok...
 bp.get<double>("Controller/Discrete-Time Integrator/gainval") = 13.4;

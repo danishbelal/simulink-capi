@@ -30,31 +30,27 @@
 
 namespace db::simulink
 {
-template <typename CapiElement, typename ModelStruct, bool EnableExceptions = true>
+template <typename CapiElement, bool EnableExceptions = true>
 class BusBuilder
 {
     static_assert(is_capi_element<CapiElement>(), "Invalid C-API Element!");
-    static_assert(has_datamapinfo_v<ModelStruct>,
-        "The Model Structure needs to have a DataMapInfo Member."
-        "If it doesnt have one, its either not a Model Structure, "
-        "or you didnt enable the C API.");
 
 public:
-    BusBuilder(ModelStruct& MS, const std::string& PathAndName)
-        : mAccessor(MS)
+    BusBuilder(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
+        : mAccessor(MMI)
         , mData(mAccessor.template ptr<void>(PathAndName))
-        , mElementMap(GetRawData<rtwCAPI_ElementMap>(MS.DataMapInfo.mmi))
-        , mDataTypeMap(GetRawData<rtwCAPI_DataTypeMap>(MS.DataMapInfo.mmi))
+        , mElementMap(GetRawData<rtwCAPI_ElementMap>(MMI))
+        , mDataTypeMap(GetRawData<rtwCAPI_DataTypeMap>(MMI))
         , mElement(nullptr)
     {
         // Find the C-API Element. It contains required meta-information.
-        const auto NumElements { db::simulink::GetCount<CapiElement>(MS.DataMapInfo.mmi) };
-        auto Data { db::simulink::GetRawData<CapiElement>(MS.DataMapInfo.mmi) };
+        const auto NumElements { db::simulink::GetCount<CapiElement>(MMI) };
+        auto Data { db::simulink::GetRawData<CapiElement>(MMI) };
 
         // Search for the Element.
         for (std::size_t i {}; mElement == nullptr && i < NumElements; ++i)
         {
-            std::string CurrentParameter { db::simulink::GetName<CapiElement>(MS.DataMapInfo.mmi, i) };
+            std::string CurrentParameter { db::simulink::GetName<CapiElement>(MMI, i) };
             if (CurrentParameter == PathAndName)
             {
                 mElement = &Data[i];
@@ -142,7 +138,7 @@ public:
     }
 
 private:
-    CapiAccessor<CapiElement, ModelStruct, EnableExceptions, DISABLE_TYPECHECKING> mAccessor;
+    CapiAccessor<CapiElement, EnableExceptions, DISABLE_TYPECHECKING> mAccessor;
     void* mData;
     const rtwCAPI_ElementMap* mElementMap;
     const rtwCAPI_DataTypeMap* mDataTypeMap;
