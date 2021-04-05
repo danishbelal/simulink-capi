@@ -6,10 +6,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Run Unit Tests"
+          name: "Compile Tests"
           command: |
             mkdir build
             cd build
-            cmake ..
+            cmake -DSLCAPI_COMPILE_TESTS=ON ..
             cmake --build .
+      - run:
+          name: "Run Unit Tests"
+          command: |
+            cd build
             ctest
