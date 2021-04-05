@@ -4,6 +4,7 @@
 [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/danishbelal/simulink-capi.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/danishbelal/simulink-capi/context:cpp)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/danishbelal/simulink-capi.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/danishbelal/simulink-capi/alerts/)
 [![Build Status](https://travis-ci.com/danishbelal/simulink-capi.svg?branch=beta)](https://travis-ci.com/danishbelal/simulink-capi)
+[![CircleCI](https://circleci.com/gh/danishbelal/simulink-capi.svg?style=shield)](https://circleci.com/gh/danishbelal/simulink-capi)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://isocpp.org/std/the-standard )
 
 # Simulink C-API Library
