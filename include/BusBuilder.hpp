@@ -28,7 +28,9 @@
 #include <sstream>
 #include <string>
 
-namespace db::simulink
+namespace db
+{
+namespace simulink
 {
 
 template <typename CapiElement, bool EnableExceptions>
@@ -158,5 +160,5 @@ private:
     const CapiElement* mElement;
 };
 }
-
+}
 #endif

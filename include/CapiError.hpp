@@ -19,7 +19,9 @@
 
 #include <string>
 
-namespace db::simulink
+namespace db
+{
+namespace simulink
 {
 enum class ErrorType
 {
@@ -33,6 +35,7 @@ struct CapiError
     std::string Message;
     ErrorType Cause;
 };
+}
 }
 
 #endif

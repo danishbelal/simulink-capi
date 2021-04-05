@@ -27,7 +27,9 @@
 
 #include "ModelTraits.hpp"
 
-namespace db::simulink
+namespace db
+{
+namespace simulink
 {
 /// Typetrait to check if the given type is a C-API Element.
 ///
@@ -264,6 +266,7 @@ constexpr rtwCAPI_ModelMappingInfo& MMI(ModelStruct& MS) noexcept
         "If it doesnt have one, its either not a Model Structure, "
         "or you didnt enable the C API.");
     return MS.DataMapInfo.mmi;
+}
 }
 }
 #endif

@@ -19,7 +19,9 @@
 
 #include <utility>
 
-namespace db::simulink
+namespace db
+{
+namespace simulink
 {
 ////////////////////////////
 // has_error_status
@@ -111,5 +113,6 @@ struct has_instance_map<T, std::void_t<decltype(std::declval<T>().InstanceMap)>>
 template <typename T>
 inline constexpr bool has_instance_map_v = has_instance_map<T>::value;
 
+}
 }
 #endif

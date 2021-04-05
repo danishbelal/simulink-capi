@@ -33,7 +33,9 @@
 #include "cleantype.hpp"
 #endif
 
-namespace db::simulink
+namespace db
+{
+namespace simulink
 {
 
 constexpr auto ENABLE_EXCEPTIONS = true;
@@ -290,6 +292,6 @@ CapiError CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::
 {
     return mError;
 }
-
+}
 }
 #endif
