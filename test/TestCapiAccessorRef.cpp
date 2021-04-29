@@ -50,7 +50,7 @@ TEST_F(TestCapiAccessorRef, BlockParameterGet)
     constexpr double SetValue { 123.456 };
     constexpr auto ElemPath { "Controller/ModelRef1/ControllerRef/NormalGain/Gain" };
 
-    BlockParameters bp { MMI() };
+    BlockParameters bp { ModelStruct.DataMapInfo.mmi };
     auto& Gain { bp.get<double>(ElemPath) };
     Gain = SetValue;
 
