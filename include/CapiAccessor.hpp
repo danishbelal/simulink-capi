@@ -20,7 +20,6 @@
 #include <exception>
 #include <functional>
 #include <iterator>
-#include <optional>
 #include <sstream>
 #include <string>
 #include <type_traits>
