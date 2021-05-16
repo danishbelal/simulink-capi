@@ -107,7 +107,7 @@ public:
     /// \see get().
     /// \see opt()
     template <typename T>
-    inline T* const ptr(const std::string& Name);
+    inline T* ptr(const std::string& Name);
 
     /// \internal
     template <typename T>
@@ -137,7 +137,7 @@ T& CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::get(con
 
 template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
 template <typename T>
-T* const CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(const std::string& PathAndName)
+T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(const std::string& PathAndName)
 {
     auto E { FindInMMI<T>(mMMI, PathAndName) };
     if (E == nullptr)
