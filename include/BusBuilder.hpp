@@ -25,7 +25,6 @@
 #include "rtw_capi.h"
 
 #include <algorithm>
-#include <sstream>
 #include <string>
 
 namespace db
@@ -76,13 +75,8 @@ public:
         // Element found?
         if (mElement == nullptr)
         {
-            std::ostringstream os;
-            os << "Element " << PathAndName << " not found";
-
-            CapiError Error;
-            Error.Message = os.str();
-            Error.Cause = ErrorType::NotFound;
-            throw Error;
+            // CapiError Error { CapiError::NotFound };
+            throw std::runtime_error("Element not found.");
         }
     }
 
@@ -115,13 +109,8 @@ public:
         auto Result { ptr<T>(MemberName) };
         if (Result == nullptr)
         {
-            std::ostringstream os;
-            os << "Element " << MemberName << " not found";
-
-            CapiError Error;
-            Error.Message = os.str();
-            Error.Cause = ErrorType::NotFound;
-            throw Error;
+            // CapiError Error { CapiError::NotFound };
+            throw std::runtime_error("Element not found.");
         }
         return *Result;
     }

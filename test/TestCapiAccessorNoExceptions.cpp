@@ -84,7 +84,7 @@ TEST_F(TestCapiAccessorNoExceptions, InvalidBlockParameterPtr)
 
     BlockParameters bp { MMI() };
     auto ptr { bp.ptr<double>("does/not/exist") };
-    EXPECT_EQ(bp.Error().Cause, db::simulink::ErrorType::NotFound);
+    EXPECT_EQ(bp.Error(), db::simulink::CapiError::NotFound);
 }
 
 /// Test `CapiAccessor::ptr` for invalid ModelParameters.
@@ -94,5 +94,5 @@ TEST_F(TestCapiAccessorNoExceptions, InvalidModelParameterPtr)
 
     ModelParameters mp { MMI() };
     mp.ptr<double>("does-not-exist");
-    EXPECT_EQ(mp.Error().Cause, db::simulink::ErrorType::NotFound);
+    EXPECT_EQ(mp.Error(), db::simulink::CapiError::NotFound);
 }

@@ -20,7 +20,6 @@
 #include <exception>
 #include <functional>
 #include <iterator>
-#include <sstream>
 #include <string>
 #include <type_traits>
 
@@ -142,11 +141,7 @@ T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(con
     auto E { FindInMMI<T>(mMMI, PathAndName) };
     if (E == nullptr)
     {
-        std::ostringstream os;
-        os << "Couldn't find Parameter '"
-           << PathAndName << "'";
-        CapiError Error { os.str(), ErrorType::NotFound };
-        HandleError(Error);
+        HandleError(CapiError::NotFound);
         return nullptr;
     };
     return E;
@@ -192,12 +187,7 @@ T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::FindInS
 
                 if (ActualType != DeducedType)
                 {
-                    std::ostringstream os;
-                    os << "Type mismatch "
-                       << "(" << ActualType
-                       << " vs. " << DeducedType;
-                    CapiError Error { os.str(), ErrorType::TypeMismatch };
-                    HandleError(Error);
+                    HandleError(CapiError::TypeMismatch);
                 }
             }
             const std::size_t AddrIndex { db::simulink::GetAddrIdx(Data, i) };
@@ -213,7 +203,15 @@ void CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::Handl
     if constexpr (ExceptionsEnabled)
     {
         mError = Error;
-        throw std::runtime_error(Error.Message);
+        switch (Error)
+        {
+            case CapiError::None:
+                return;
+            case CapiError::TypeMismatch:
+                throw std::runtime_error("Typemismatch.");
+            case CapiError::NotFound:
+                throw std::runtime_error("Element not found.");
+        }
     }
     else
     {

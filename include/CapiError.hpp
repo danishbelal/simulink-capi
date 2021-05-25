@@ -17,24 +17,17 @@
 #ifndef CAPI_ERROR_HPP
 #define CAPI_ERROR_HPP
 
-#include <string>
-
 namespace db
 {
 namespace simulink
 {
-enum class ErrorType
+enum class CapiError
 {
     None,
     TypeMismatch,
     NotFound
 };
 
-struct CapiError
-{
-    std::string Message;
-    ErrorType Cause;
-};
 }
 }
 
