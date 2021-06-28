@@ -46,8 +46,6 @@ using Signals = db::simulink::Signals<>;
 /// magic numbers.
 TEST_F(TestCapiAccessor, InternalGetAddrMapIndex)
 {
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-
     // Signals
     auto S1 { GetAddrMapIndex<rtwCAPI_Signals>("Controller/Discrete-Time Integrator") };
     auto S2 { GetAddrMapIndex<rtwCAPI_Signals>("Controller/ModelRef1") };
@@ -125,7 +123,7 @@ TEST_F(TestCapiAccessor, InvalidBlockParameterGet)
 {
 
     BlockParameters bp { MMI() };
-    EXPECT_THROW(auto& ref { bp.get<double>("does/not/exist") }, std::runtime_error);
+    EXPECT_THROW(bp.get<double>("does/not/exist"), std::runtime_error);
 }
 
 /// Test `CapiAccessor::ptr` for invalid BlockParameters.
@@ -134,7 +132,7 @@ TEST_F(TestCapiAccessor, InvalidBlockParameterPtr)
 {
 
     BlockParameters bp { MMI() };
-    EXPECT_THROW(auto ptr { bp.ptr<double>("does/not/exist") }, std::runtime_error);
+    EXPECT_THROW(bp.ptr<double>("does/not/exist"), std::runtime_error);
 }
 
 /// Test `CapiAccessor::get` for ModelParameters.
@@ -186,7 +184,7 @@ TEST_F(TestCapiAccessor, InvalidModelParameterGet)
 {
 
     ModelParameters mp { MMI() };
-    EXPECT_THROW(auto& ref { mp.get<double>("does-not-exist") }, std::runtime_error);
+    EXPECT_THROW(mp.get<double>("does-not-exist"), std::runtime_error);
 }
 
 /// Test `CapiAccessor::ptr` for invalid ModelParameters.
@@ -195,7 +193,7 @@ TEST_F(TestCapiAccessor, InvalidModelParameterPtr)
 {
 
     ModelParameters mp { MMI() };
-    EXPECT_THROW(auto ptr { mp.ptr<double>("does-not-exist") }, std::runtime_error);
+    EXPECT_THROW(mp.ptr<double>("does-not-exist"), std::runtime_error);
 }
 
 /// Test `CapiAccessor::get` for Signals.
@@ -244,7 +242,7 @@ TEST_F(TestCapiAccessor, SignalDirect)
 TEST_F(TestCapiAccessor, InvalidSignalGet)
 {
     Signals sigs { MMI() };
-    EXPECT_THROW(auto& ref { sigs.get<double>("does-not-exist") }, std::runtime_error);
+    EXPECT_THROW(sigs.get<double>("does-not-exist"), std::runtime_error);
 }
 
 /// Test `CapiAccessor::get` for invalid Signals.
@@ -252,5 +250,5 @@ TEST_F(TestCapiAccessor, InvalidSignalGet)
 TEST_F(TestCapiAccessor, InvalidSignalDirect)
 {
     Signals sigs { MMI() };
-    EXPECT_THROW(auto ptr { sigs.ptr<double>("does-not-exist") }, std::runtime_error);
+    EXPECT_THROW(sigs.ptr<double>("does-not-exist"), std::runtime_error);
 }

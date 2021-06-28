@@ -46,8 +46,6 @@ using Signals = db::simulink::Signals<db::simulink::DISABLE_EXCEPTIONS>;
 /// magic numbers.
 TEST_F(TestCapiAccessorNoExceptions, InternalGetAddrMapIndex)
 {
-    auto& MMI { ModelStruct.DataMapInfo.mmi };
-
     // Signals
     auto S1 { GetAddrMapIndex<rtwCAPI_Signals>("Controller/Discrete-Time Integrator") };
     auto S2 { GetAddrMapIndex<rtwCAPI_Signals>("Controller/ModelRef1") };
@@ -83,7 +81,7 @@ TEST_F(TestCapiAccessorNoExceptions, InvalidBlockParameterPtr)
 {
 
     BlockParameters bp { MMI() };
-    auto ptr { bp.ptr<double>("does/not/exist") };
+    bp.ptr<double>("does/not/exist");
     EXPECT_EQ(bp.Error(), db::simulink::CapiError::NotFound);
 }
 

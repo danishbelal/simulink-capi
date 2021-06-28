@@ -122,7 +122,6 @@ public:
 
         auto ElementMapIndex { DataTypeEntry.elemMapIndex };
 
-        auto NumMembers { DataTypeEntry.numElements };
         const rtwCAPI_ElementMap* Members { &mElementMap[ElementMapIndex] };
 
         return Members;
