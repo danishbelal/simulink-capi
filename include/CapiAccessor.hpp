@@ -58,7 +58,6 @@ template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnab
 class CapiAccessor
 {
     rtwCAPI_ModelMappingInfo& mMMI;
-    CapiError mError;
 
 public:
     CapiAccessor(rtwCAPI_ModelMappingInfo& MMI);
@@ -116,14 +115,10 @@ public:
 
     /// \internal
     template <typename T>
-    T* FindInMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
+    T* FindInMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error);
     /// \internal
     template <typename T>
-    T* FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName);
-
-    void HandleError(CapiError Error);
-    CapiError Error();
-
+    T* FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error);
 }; // end of class CapiAccessor.
 
 template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
@@ -144,18 +139,20 @@ template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnab
 template <typename T>
 T& CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::get(const std::string& PathAndName, CapiError& Error)
 {
+    return *ptr<T>(PathAndName, Error);
 }
 
 template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
 template <typename T>
 T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(const std::string& PathAndName)
 {
-    auto E { FindInMMI<T>(mMMI, PathAndName) };
-    if (E == nullptr)
+    CapiError Error;
+    auto E { ptr<T>(PathAndName, Error) };
+    if (Error != CapiError::None)
     {
-        HandleError(CapiError::NotFound);
-        return nullptr;
-    };
+        throw std::runtime_error("capi element not found");
+    }
+
     return E;
 }
 
@@ -163,18 +160,25 @@ template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnab
 template <typename T>
 T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(const std::string& PathAndName, CapiError& Error)
 {
+    auto E { FindInMMI<T>(mMMI, PathAndName, Error) };
+    if (E == nullptr)
+    {
+        Error = CapiError::NotFound;
+        return nullptr;
+    }
+    return E;
 }
 
 template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
 template <typename T>
-T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::FindInMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
+T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::FindInMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error)
 {
-    auto Result { FindInStaticMMI<T>(MMI, PathAndName) };
+    auto Result { FindInStaticMMI<T>(MMI, PathAndName, Error) };
 
     const std::size_t NumModels { MMI.InstanceMap.childMMIArrayLen };
     for (int i {}; Result == nullptr && i < NumModels; ++i)
     {
-        Result = FindInMMI<T>(*MMI.InstanceMap.childMMIArray[i], PathAndName);
+        Result = FindInMMI<T>(*MMI.InstanceMap.childMMIArray[i], PathAndName, Error);
     }
 
     return Result;
@@ -182,16 +186,14 @@ T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::FindInM
 
 template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
 template <typename T>
-T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
+T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error)
 {
-    T* Result { nullptr };
-
     const auto NumElements { db::simulink::GetCount<WrappedElement>(MMI) };
     const auto Data { db::simulink::GetRawData<WrappedElement>(MMI) };
     void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
 
     // TODO: replace with std search algorithm
-    for (std::size_t i {}; Result == nullptr && i < NumElements; ++i)
+    for (std::size_t i {}; i < NumElements; ++i)
     {
         std::string CurrentParameter { db::simulink::GetName<WrappedElement>(MMI, i) };
         if (CurrentParameter == PathAndName)
@@ -205,42 +207,16 @@ T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::FindInS
 
                 if (ActualType != DeducedType)
                 {
-                    HandleError(CapiError::TypeMismatch);
+                    Error = CapiError::TypeMismatch;
+                    return nullptr;
                 }
             }
+            Error = CapiError::None;
             const std::size_t AddrIndex { db::simulink::GetAddrIdx(Data, i) };
-            Result = db::simulink::GetDataAddress<T>(AddrMap, AddrIndex);
+            return db::simulink::GetDataAddress<T>(AddrMap, AddrIndex);
         }
     }
-    return Result;
-}
-
-template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
-void CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::HandleError(CapiError Error)
-{
-    if constexpr (ExceptionsEnabled)
-    {
-        mError = Error;
-        switch (Error)
-        {
-            case CapiError::None:
-                return;
-            case CapiError::TypeMismatch:
-                throw std::runtime_error("Typemismatch.");
-            case CapiError::NotFound:
-                throw std::runtime_error("Element not found.");
-        }
-    }
-    else
-    {
-        mError = Error;
-    }
-}
-
-template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
-CapiError CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::Error()
-{
-    return mError;
+    return nullptr;
 }
 }
 }

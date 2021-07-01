@@ -79,18 +79,18 @@ TEST_F(TestCapiAccessorNoExceptions, InternalGetAddrMapIndex)
 /// .
 TEST_F(TestCapiAccessorNoExceptions, InvalidBlockParameterPtr)
 {
-
     BlockParameters bp { MMI() };
-    bp.ptr<double>("does/not/exist");
-    EXPECT_EQ(bp.Error(), db::simulink::CapiError::NotFound);
+    db::simulink::CapiError Error;
+    bp.ptr<double>("does/not/exist", Error);
+    EXPECT_EQ(Error, db::simulink::CapiError::NotFound);
 }
 
 /// Test `CapiAccessor::ptr` for invalid ModelParameters.
 /// .
 TEST_F(TestCapiAccessorNoExceptions, InvalidModelParameterPtr)
 {
-
     ModelParameters mp { MMI() };
-    mp.ptr<double>("does-not-exist");
-    EXPECT_EQ(mp.Error(), db::simulink::CapiError::NotFound);
+    db::simulink::CapiError Error;
+    mp.ptr<double>("does-not-exist", Error);
+    EXPECT_EQ(Error, db::simulink::CapiError::NotFound);
 }
