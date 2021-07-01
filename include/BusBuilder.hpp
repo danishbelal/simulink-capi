@@ -32,31 +32,29 @@ namespace db
 namespace simulink
 {
 
-template <typename CapiElement, bool EnableExceptions>
+template <typename CapiElement>
 class BusBuilder;
 
-template <bool EnableExceptions = true>
-using BlockParameterBusBuilder = BusBuilder<rtwCAPI_BlockParameters, EnableExceptions>;
-template <bool EnableExceptions = true>
-using ModelParameterBusBuilder = BusBuilder<rtwCAPI_ModelParameters, EnableExceptions>;
-template <bool EnableExceptions = true>
-using StateBusBuilder = BusBuilder<rtwCAPI_States, EnableExceptions>;
-template <bool EnableExceptions = true>
-using SignalBusBuilder = BusBuilder<rtwCAPI_Signals, EnableExceptions>;
+using BlockParameterBusBuilder = BusBuilder<rtwCAPI_BlockParameters>;
+using ModelParameterBusBuilder = BusBuilder<rtwCAPI_ModelParameters>;
+using StateBusBuilder = BusBuilder<rtwCAPI_States>;
+using SignalBusBuilder = BusBuilder<rtwCAPI_Signals>;
 
-template <typename CapiElement, bool EnableExceptions>
+template <typename CapiElement>
 class BusBuilder
 {
     static_assert(is_capi_element<CapiElement>(), "Invalid C-API Element!");
 
 public:
     BusBuilder(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName)
-        : mAccessor(MMI)
-        , mData(mAccessor.template ptr<void>(PathAndName))
-        , mElementMap(GetRawData<rtwCAPI_ElementMap>(MMI))
+        : mElementMap(GetRawData<rtwCAPI_ElementMap>(MMI))
         , mDataTypeMap(GetRawData<rtwCAPI_DataTypeMap>(MMI))
         , mElement(nullptr)
     {
+        // Get the actual element.
+        CapiAccessor<CapiElement, DISABLE_TYPECHECKING> Accessor(MMI);
+        mData = Accessor.template ptr<void>(PathAndName);
+
         // Find the C-API Element. It contains required meta-information.
         const auto NumElements { db::simulink::GetCount<CapiElement>(MMI) };
         auto Data { db::simulink::GetRawData<CapiElement>(MMI) };
@@ -105,7 +103,6 @@ public:
     template <typename T>
     T& get(const std::string MemberName)
     {
-        static_assert(EnableExceptions, "BusBuilder::get() is only available with Exceptions enabled.");
         auto Result { ptr<T>(MemberName) };
         if (Result == nullptr)
         {
@@ -141,7 +138,6 @@ public:
     }
 
 private:
-    CapiAccessor<CapiElement, EnableExceptions, DISABLE_TYPECHECKING> mAccessor;
     void* mData;
     const rtwCAPI_ElementMap* mElementMap;
     const rtwCAPI_DataTypeMap* mDataTypeMap;

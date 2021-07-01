@@ -37,10 +37,10 @@ protected:
     }
 };
 
-using BlockParameters = db::simulink::BlockParameters<db::simulink::DISABLE_EXCEPTIONS>;
-using ModelParameters = db::simulink::ModelParameters<db::simulink::DISABLE_EXCEPTIONS>;
-using States = db::simulink::States<db::simulink::DISABLE_EXCEPTIONS>;
-using Signals = db::simulink::Signals<db::simulink::DISABLE_EXCEPTIONS>;
+using BlockParameters = db::simulink::BlockParameters<>;
+using ModelParameters = db::simulink::ModelParameters<>;
+using States = db::simulink::States<>;
+using Signals = db::simulink::Signals<>;
 
 /// Verify the internal GetAddrMapIndex Function against some
 /// magic numbers.

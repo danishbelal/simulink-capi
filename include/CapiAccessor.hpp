@@ -36,25 +36,22 @@ namespace db
 namespace simulink
 {
 
-constexpr auto ENABLE_EXCEPTIONS = true;
-constexpr auto DISABLE_EXCEPTIONS = false;
-
 constexpr auto ENABLE_TYPECHECKING = true;
 constexpr auto DISABLE_TYPECHECKING = false;
 
-template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
+template <typename WrappedElement, bool TypeCheckingEnabled>
 class CapiAccessor;
 
-template <bool ExceptionsEnabled = ENABLE_EXCEPTIONS, bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
-using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters, ExceptionsEnabled, TypeCheckingEnabled>;
-template <bool ExceptionsEnabled = ENABLE_EXCEPTIONS, bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
-using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters, ExceptionsEnabled, TypeCheckingEnabled>;
-template <bool ExceptionsEnabled = ENABLE_EXCEPTIONS, bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
-using States = CapiAccessor<rtwCAPI_States, ExceptionsEnabled, TypeCheckingEnabled>;
-template <bool ExceptionsEnabled = ENABLE_EXCEPTIONS, bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
-using Signals = CapiAccessor<rtwCAPI_Signals, ExceptionsEnabled, TypeCheckingEnabled>;
+template <bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
+using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters, TypeCheckingEnabled>;
+template <bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
+using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters, TypeCheckingEnabled>;
+template <bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
+using States = CapiAccessor<rtwCAPI_States, TypeCheckingEnabled>;
+template <bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
+using Signals = CapiAccessor<rtwCAPI_Signals, TypeCheckingEnabled>;
 
-template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
+template <typename WrappedElement, bool TypeCheckingEnabled>
 class CapiAccessor
 {
     rtwCAPI_ModelMappingInfo& mMMI;
@@ -121,30 +118,29 @@ public:
     T* FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error);
 }; // end of class CapiAccessor.
 
-template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
-CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::CapiAccessor(rtwCAPI_ModelMappingInfo& MMI)
+template <typename WrappedElement, bool TypeCheckingEnabled>
+CapiAccessor<WrappedElement, TypeCheckingEnabled>::CapiAccessor(rtwCAPI_ModelMappingInfo& MMI)
     : mMMI(MMI)
 {
 }
 
-template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
+template <typename WrappedElement, bool TypeCheckingEnabled>
 template <typename T>
-T& CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::get(const std::string& PathAndName)
+T& CapiAccessor<WrappedElement, TypeCheckingEnabled>::get(const std::string& PathAndName)
 {
-    static_assert(ExceptionsEnabled, "CapiAccessor::get() is only available with Exceptions disabled.");
     return *ptr<T>(PathAndName);
 }
 
-template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
+template <typename WrappedElement, bool TypeCheckingEnabled>
 template <typename T>
-T& CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::get(const std::string& PathAndName, CapiError& Error)
+T& CapiAccessor<WrappedElement, TypeCheckingEnabled>::get(const std::string& PathAndName, CapiError& Error)
 {
     return *ptr<T>(PathAndName, Error);
 }
 
-template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
+template <typename WrappedElement, bool TypeCheckingEnabled>
 template <typename T>
-T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(const std::string& PathAndName)
+T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::ptr(const std::string& PathAndName)
 {
     CapiError Error;
     auto E { ptr<T>(PathAndName, Error) };
@@ -156,9 +152,9 @@ T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(con
     return E;
 }
 
-template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
+template <typename WrappedElement, bool TypeCheckingEnabled>
 template <typename T>
-T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(const std::string& PathAndName, CapiError& Error)
+T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::ptr(const std::string& PathAndName, CapiError& Error)
 {
     auto E { FindInMMI<T>(mMMI, PathAndName, Error) };
     if (E == nullptr)
@@ -169,9 +165,9 @@ T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(con
     return E;
 }
 
-template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
+template <typename WrappedElement, bool TypeCheckingEnabled>
 template <typename T>
-T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::FindInMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error)
+T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::FindInMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error)
 {
     auto Result { FindInStaticMMI<T>(MMI, PathAndName, Error) };
 
@@ -184,9 +180,9 @@ T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::FindInM
     return Result;
 }
 
-template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
+template <typename WrappedElement, bool TypeCheckingEnabled>
 template <typename T>
-T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error)
+T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error)
 {
     const auto NumElements { db::simulink::GetCount<WrappedElement>(MMI) };
     const auto Data { db::simulink::GetRawData<WrappedElement>(MMI) };
