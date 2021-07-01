@@ -176,7 +176,7 @@ T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::FindInM
     auto Result { FindInStaticMMI<T>(MMI, PathAndName, Error) };
 
     const std::size_t NumModels { MMI.InstanceMap.childMMIArrayLen };
-    for (int i {}; Result == nullptr && i < NumModels; ++i)
+    for (std::size_t i {}; Result == nullptr && i < NumModels; ++i)
     {
         Result = FindInMMI<T>(*MMI.InstanceMap.childMMIArray[i], PathAndName, Error);
     }
