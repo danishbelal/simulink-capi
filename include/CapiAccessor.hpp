@@ -91,6 +91,9 @@ public:
     template <typename T>
     inline T& get(const std::string& Name);
 
+    template <typename T>
+    inline T& get(const std::string& Name, CapiError& Error);
+
     /// Returns a pointer to the element.
     ///
     /// Not very spectacular - it does what you expect.
@@ -107,6 +110,9 @@ public:
     /// \see opt()
     template <typename T>
     inline T* ptr(const std::string& Name);
+
+    template <typename T>
+    inline T* ptr(const std::string& Name, CapiError& Error);
 
     /// \internal
     template <typename T>
@@ -136,6 +142,12 @@ T& CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::get(con
 
 template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
 template <typename T>
+T& CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::get(const std::string& PathAndName, CapiError& Error)
+{
+}
+
+template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
+template <typename T>
 T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(const std::string& PathAndName)
 {
     auto E { FindInMMI<T>(mMMI, PathAndName) };
@@ -145,6 +157,12 @@ T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(con
         return nullptr;
     };
     return E;
+}
+
+template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
+template <typename T>
+T* CapiAccessor<WrappedElement, ExceptionsEnabled, TypeCheckingEnabled>::ptr(const std::string& PathAndName, CapiError& Error)
+{
 }
 
 template <typename WrappedElement, bool ExceptionsEnabled, bool TypeCheckingEnabled>
