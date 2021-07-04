@@ -73,3 +73,8 @@ bp.get<int>("Controller/Discrete-Time Integrator/gainval") = 13;
 terminate called after throwing an instance of 'std::runtime_error'
   what():  Type mismatch (double vs. int)
 ```
+
+## Roadmap
+ - Enable access to nested bus members without explicit instantiation
+ - Make the library work without a heap
+ - Remove UB from `get()`
