@@ -51,28 +51,28 @@ TEST_F(TestCapiAccessor, InternalGetAddrMapIndex)
     auto S2 { GetAddrMapIndex<rtwCAPI_Signals>("Controller/ModelRef1") };
     auto S3 { GetAddrMapIndex<rtwCAPI_Signals>("Controller/AlgLoop") };
     EXPECT_EQ(S1, 0);
-    EXPECT_EQ(S2, 5);
-    EXPECT_EQ(S3, 11);
+    EXPECT_EQ(S2, 6);
+    EXPECT_EQ(S3, 13);
 
     // Blockparameters
     auto BP1 { GetAddrMapIndex<rtwCAPI_BlockParameters>("Controller/Constant/Value") };
     auto BP2 { GetAddrMapIndex<rtwCAPI_BlockParameters>("Controller/Discrete-Time Integrator/gainval") };
     auto BP3 { GetAddrMapIndex<rtwCAPI_BlockParameters>("Controller/AlgLoop/InitialCondition") };
-    EXPECT_EQ(BP1, 12);
-    EXPECT_EQ(BP2, 13);
-    EXPECT_EQ(BP3, 20);
+    EXPECT_EQ(BP1, 14);
+    EXPECT_EQ(BP2, 15);
+    EXPECT_EQ(BP3, 22);
 
     // Modelparameters
     auto MP1 { GetAddrMapIndex<rtwCAPI_ModelParameters>("mMatrix") };
     auto MP2 { GetAddrMapIndex<rtwCAPI_ModelParameters>("X3_DD") };
-    EXPECT_EQ(MP1, 23);
-    EXPECT_EQ(MP2, 24);
+    EXPECT_EQ(MP1, 25);
+    EXPECT_EQ(MP2, 27);
 
     // Blockstates
     auto BS1 { GetAddrMapIndex<rtwCAPI_States>("Controller/Discrete-Time\nIntegrator/DSTATE") };
     auto BS2 { GetAddrMapIndex<rtwCAPI_States>("Controller/AlgLoop/DSTATE") };
-    EXPECT_EQ(BS1, 21);
-    EXPECT_EQ(BS2, 22);
+    EXPECT_EQ(BS1, 23);
+    EXPECT_EQ(BS2, 24);
 }
 
 /// Test CapiAccessor::get<> for BlockParameters.
