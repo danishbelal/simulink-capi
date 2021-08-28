@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'Controller'.
  *
- * Model version                  : 1.74
- * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Fri Jan  8 15:55:01 2021
+ * Model version                  : 3.4
+ * Simulink Coder version         : 9.4 (R2020b) 29-Jul-2020
+ * C/C++ source code generated on : Wed Aug 25 10:24:31 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -18,7 +18,7 @@
 #include <string.h>
 #include "rtw_modelmap.h"
 #ifndef Controller_COMMON_INCLUDES_
-# define Controller_COMMON_INCLUDES_
+#define Controller_COMMON_INCLUDES_
 #include "rtwtypes.h"
 #endif                                 /* Controller_COMMON_INCLUDES_ */
 
@@ -30,23 +30,23 @@
 
 /* Macros for accessing real-time model data structure */
 #ifndef rtmGetDataMapInfo
-# define rtmGetDataMapInfo(rtm)        ((rtm)->DataMapInfo)
+#define rtmGetDataMapInfo(rtm)         ((rtm)->DataMapInfo)
 #endif
 
 #ifndef rtmSetDataMapInfo
-# define rtmSetDataMapInfo(rtm, val)   ((rtm)->DataMapInfo = (val))
+#define rtmSetDataMapInfo(rtm, val)    ((rtm)->DataMapInfo = (val))
 #endif
 
 #ifndef rtmGetErrorStatus
-# define rtmGetErrorStatus(rtm)        ((rtm)->errorStatus)
+#define rtmGetErrorStatus(rtm)         ((rtm)->errorStatus)
 #endif
 
 #ifndef rtmSetErrorStatus
-# define rtmSetErrorStatus(rtm, val)   ((rtm)->errorStatus = (val))
+#define rtmSetErrorStatus(rtm, val)    ((rtm)->errorStatus = (val))
 #endif
 
 #ifndef rtmGetErrorStatusPointer
-# define rtmGetErrorStatusPointer(rtm) ((const char_T **)(&((rtm)->errorStatus)))
+#define rtmGetErrorStatusPointer(rtm)  ((const char_T **)(&((rtm)->errorStatus)))
 #endif
 
 /* Block signals (default storage) */
@@ -55,6 +55,8 @@ typedef struct
   real_T MatGain[9];                   /* '<Root>/MatGain' */
   real_T ModelRef1;                    /* '<Root>/ModelRef1' */
   real_T ModelRef2;                    /* '<Root>/ModelRef2' */
+  real_T MatGain1;                     /* '<Root>/MatGain1' */
+  real_T Sum6;                         /* '<Root>/Sum6' */
   real_T Sum3;                         /* '<Root>/Sum3' */
   real_T Sum4[9];                      /* '<Root>/Sum4' */
   real_T ConfigMW2;                    /* '<Root>/ConfigMW2' */
@@ -82,9 +84,6 @@ typedef struct
 {
   InstP_ControllerRef_T InstP_ModelRef1;/* '<Root>/ModelRef1' */
   InstP_ControllerRef_T InstP_ModelRef2;/* '<Root>/ModelRef2' */
-  real_T mMatrix[9];                   /* Variable: mMatrix
-                                        * Referenced by: '<Root>/MatGain'
-                                        */
 }
 InstP_Controller_T;
 
@@ -98,8 +97,8 @@ ExternalInputs_Controller_T;
 /* External outputs (root outports fed by signals with default storage) */
 typedef struct
 {
-  real_T y;                            /* '<Root>/y' */
-  real_T y_m[9];                       /* '<Root>/ScaledInput' */
+  real_T y_i;                          /* '<Root>/y' */
+  real_T y[9];                         /* '<Root>/ScaledInput' */
   real_T X3[27];                       /* '<Root>/X3' */
   real_T X4[64];                       /* '<Root>/X4' */
 }
@@ -108,6 +107,9 @@ ExternalOutputs_Controller_T;
 /* Parameters (default storage) */
 struct Parameters_Controller_T_
 {
+  real_T mMatrix[9];                   /* Variable: mMatrix
+                                        * Referenced by: '<Root>/MatGain'
+                                        */
   real_T Constant_Value[9];            /* Expression: eye(3)
                                         * Referenced by: '<Root>/Constant'
                                         */
@@ -135,7 +137,7 @@ struct Parameters_Controller_T_
 /* Real-time Model Data Structure */
 struct tag_RTM_Controller_T
 {
-  const char_T * volatile errorStatus;
+  const char_T *errorStatus;
   BlockIO_Controller_T *blockIO;
   D_Work_Controller_T *dwork;
 
@@ -147,9 +149,9 @@ struct tag_RTM_Controller_T
   struct
   {
     rtwCAPI_ModelMappingInfo mmi;
-    void* dataAddress[26];
-    int32_T* vardimsAddress[26];
-    RTWLoggingFcnPtr loggingPtrs[26];
+    void* dataAddress[29];
+    int32_T* vardimsAddress[29];
+    RTWLoggingFcnPtr loggingPtrs[29];
     rtwCAPI_ModelMappingInfo* childMMI[2];
   }
   DataMapInfo;
@@ -161,6 +163,9 @@ struct tag_RTM_Controller_T
 extern Parameters_Controller_T Controller_P;
 
 /* Model block global parameters (default storage) */
+extern CoreConfiguration rtP_Configuration;/* Variable: Configuration
+                                            * Referenced by: '<Root>/MatGain1'
+                                            */
 extern real_T rtP_X3_DD[27];           /* Variable: X3_DD
                                         * Referenced by: '<Root>/Constant1'
                                         */

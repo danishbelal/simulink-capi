@@ -4,8 +4,8 @@
  * Code generated for Simulink model 'ControllerRef'.
  *
  * Model version                  : 1.9
- * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Fri Jan  8 15:54:48 2021
+ * Simulink Coder version         : 9.4 (R2020b) 29-Jul-2020
+ * C/C++ source code generated on : Wed Aug 25 10:24:08 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -20,35 +20,35 @@
 
 /* Macros for accessing real-time model data structure */
 #ifndef rtmGetControllerRef_InstP_ref
-# define rtmGetControllerRef_InstP_ref(rtm) ((rtm)->ControllerRef_InstP_ref)
+#define rtmGetControllerRef_InstP_ref(rtm) ((rtm)->ControllerRef_InstP_ref)
 #endif
 
 #ifndef rtmSetControllerRef_InstP_ref
-# define rtmSetControllerRef_InstP_ref(rtm, val) ((rtm)->ControllerRef_InstP_ref = (val))
+#define rtmSetControllerRef_InstP_ref(rtm, val) ((rtm)->ControllerRef_InstP_ref = (val))
 #endif
 
 #ifndef rtmGetDataMapInfo
-# define rtmGetDataMapInfo(rtm)        ((rtm)->DataMapInfo)
+#define rtmGetDataMapInfo(rtm)         ((rtm)->DataMapInfo)
 #endif
 
 #ifndef rtmSetDataMapInfo
-# define rtmSetDataMapInfo(rtm, val)   ((rtm)->DataMapInfo = (val))
+#define rtmSetDataMapInfo(rtm, val)    ((rtm)->DataMapInfo = (val))
 #endif
 
 #ifndef rtmGetErrorStatus
-# define rtmGetErrorStatus(rtm)        (*((rtm)->errorStatus))
+#define rtmGetErrorStatus(rtm)         (*((rtm)->errorStatus))
 #endif
 
 #ifndef rtmSetErrorStatus
-# define rtmSetErrorStatus(rtm, val)   (*((rtm)->errorStatus) = (val))
+#define rtmSetErrorStatus(rtm, val)    (*((rtm)->errorStatus) = (val))
 #endif
 
 #ifndef rtmGetErrorStatusPointer
-# define rtmGetErrorStatusPointer(rtm) (rtm)->errorStatus
+#define rtmGetErrorStatusPointer(rtm)  (rtm)->errorStatus
 #endif
 
 #ifndef rtmSetErrorStatusPointer
-# define rtmSetErrorStatusPointer(rtm, val) ((rtm)->errorStatus = (val))
+#define rtmSetErrorStatusPointer(rtm, val) ((rtm)->errorStatus = (val))
 #endif
 
 extern Parameters_ControllerRef_T ControllerRef_P;

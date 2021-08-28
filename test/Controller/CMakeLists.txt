@@ -11,7 +11,7 @@ set(ControllerSources "${ControllerPath}/Controller.c"
                          "${ControllerPath}/Controller_capi.c"
                          "${ControllerPath}/Controller_capi_host.h")
 
-set(ExtraPath "${CMAKE_CURRENT_SOURCE_DIR}/R2019b")
+set(ExtraPath "${CMAKE_CURRENT_SOURCE_DIR}/R2020b")
 set(ExtraSources "${ExtraPath}/rtw/c/src/rtw_capi.h"
                  "${ExtraPath}/rtw/c/src/rtw_modelmap_logging.h"
                  "${ExtraPath}/rtw/c/src/rtw_modelmap.h"

@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'Controller'.
  *
- * Model version                  : 1.74
- * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Tue Jan  5 07:27:50 2021
+ * Model version                  : 3.4
+ * Simulink Coder version         : 9.4 (R2020b) 29-Jul-2020
+ * C/C++ source code generated on : Wed Aug 25 10:24:31 2021
  */
 
 #ifndef RTW_HEADER_rt_defines_h_
@@ -29,16 +29,16 @@
  *   accessed by the function body.
  */
 #ifndef UNUSED_PARAMETER
-# if defined(__LCC__)
-#   define UNUSED_PARAMETER(x)                                   /* do nothing */
-# else
+#if defined(__LCC__)
+#define UNUSED_PARAMETER(x)                                      /* do nothing */
+#else
 
 /*
  * This is the semi-ANSI standard way of indicating that an
  * unused function parameter is required.
  */
-#   define UNUSED_PARAMETER(x)         (void) (x)
-# endif
+#define UNUSED_PARAMETER(x)            (void) (x)
+#endif
 #endif
 #endif                                 /* RTW_HEADER_rt_defines_h_ */
 

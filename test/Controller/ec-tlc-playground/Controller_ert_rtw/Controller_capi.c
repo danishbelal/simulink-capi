@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'Controller'.
  *
- * Model version                  : 1.74
- * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Fri Jan  8 15:55:01 2021
+ * Model version                  : 3.4
+ * Simulink Coder version         : 9.4 (R2020b) 29-Jul-2020
+ * C/C++ source code generated on : Wed Aug 25 10:24:31 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -63,42 +63,52 @@ static rtwCAPI_Signals rtBlockSignals[] =
   },
 
   {
-    4, 0, TARGET_STRING("Controller/SuperDuperGainBlock"),
+    4, 0, TARGET_STRING("Controller/MatGain1"),
     TARGET_STRING(""), 0, 0, 0, 0, 0
   },
 
   {
-    5, 0, TARGET_STRING("Controller/ModelRef1"),
+    5, 0, TARGET_STRING("Controller/SuperDuperGainBlock"),
     TARGET_STRING(""), 0, 0, 0, 0, 0
   },
 
   {
-    6, 0, TARGET_STRING("Controller/ModelRef2"),
+    6, 0, TARGET_STRING("Controller/ModelRef1"),
     TARGET_STRING(""), 0, 0, 0, 0, 0
   },
 
   {
-    7, 0, TARGET_STRING("Controller/Sum"),
+    7, 0, TARGET_STRING("Controller/ModelRef2"),
     TARGET_STRING(""), 0, 0, 0, 0, 0
   },
 
   {
-    8, 0, TARGET_STRING("Controller/Sum3"),
+    8, 0, TARGET_STRING("Controller/Sum"),
     TARGET_STRING(""), 0, 0, 0, 0, 0
   },
 
   {
-    9, 0, TARGET_STRING("Controller/Sum4"),
+    9, 0, TARGET_STRING("Controller/Sum3"),
+    TARGET_STRING(""), 0, 0, 0, 0, 0
+  },
+
+  {
+    10, 0, TARGET_STRING("Controller/Sum4"),
     TARGET_STRING(""), 0, 0, 1, 0, 0
   },
 
   {
-    10, 0, TARGET_STRING("Controller/Sum5"),
+    11, 0, TARGET_STRING("Controller/Sum5"),
     TARGET_STRING(""), 0, 0, 1, 0, 0
   },
 
   {
-    11, 0, TARGET_STRING("Controller/AlgLoop"),
+    12, 0, TARGET_STRING("Controller/Sum6"),
+    TARGET_STRING(""), 0, 0, 0, 0, 0
+  },
+
+  {
+    13, 0, TARGET_STRING("Controller/AlgLoop"),
     TARGET_STRING(""), 0, 0, 0, 0, 0
   },
 
@@ -113,47 +123,47 @@ static rtwCAPI_BlockParameters rtBlockParameters[] =
    * paramName, dataTypeIndex, dimIndex, fixPtIdx
    */
   {
-    12, TARGET_STRING("Controller/Constant"),
+    14, TARGET_STRING("Controller/Constant"),
     TARGET_STRING("Value"), 0, 1, 0
   },
 
   {
-    13, TARGET_STRING("Controller/Discrete-Time Integrator"),
+    15, TARGET_STRING("Controller/Discrete-Time Integrator"),
     TARGET_STRING("gainval"), 0, 0, 0
   },
 
   {
-    14, TARGET_STRING("Controller/Discrete-Time Integrator"),
+    16, TARGET_STRING("Controller/Discrete-Time Integrator"),
     TARGET_STRING("InitialCondition"), 0, 0, 0
   },
 
   {
-    15, TARGET_STRING("Controller/ConfigMW1"),
+    17, TARGET_STRING("Controller/ConfigMW1"),
     TARGET_STRING("Gain"), 0, 0, 0
   },
 
   {
-    16, TARGET_STRING("Controller/ConfigMW2"),
+    18, TARGET_STRING("Controller/ConfigMW2"),
     TARGET_STRING("Gain"), 0, 0, 0
   },
 
   {
-    17, TARGET_STRING("Controller/SuperDuperGainBlock"),
+    19, TARGET_STRING("Controller/SuperDuperGainBlock"),
     TARGET_STRING("Gain"), 0, 0, 0
   },
 
   {
-    18, TARGET_STRING("Controller/ModelRef1"),
+    20, TARGET_STRING("Controller/ModelRef1"),
     TARGET_STRING("SubmodelConfig"), 1, 0, 0
   },
 
   {
-    19, TARGET_STRING("Controller/ModelRef2"),
+    21, TARGET_STRING("Controller/ModelRef2"),
     TARGET_STRING("SubmodelConfig"), 1, 0, 0
   },
 
   {
-    20, TARGET_STRING("Controller/AlgLoop"),
+    22, TARGET_STRING("Controller/AlgLoop"),
     TARGET_STRING("InitialCondition"), 0, 0, 0
   },
 
@@ -170,12 +180,12 @@ static rtwCAPI_States rtBlockStates[] =
    * fixPtIdx, sTimeIndex, isContinuous, hierInfoIdx, flatElemIdx
    */
   {
-    21, -1, TARGET_STRING("Controller/Discrete-Time\nIntegrator"),
+    23, -1, TARGET_STRING("Controller/Discrete-Time\nIntegrator"),
     TARGET_STRING("DSTATE"), "", 0, 0, 0, 0, 0, 0, -1, 0
   },
 
   {
-    22, -1, TARGET_STRING("Controller/AlgLoop"),
+    24, -1, TARGET_STRING("Controller/AlgLoop"),
     TARGET_STRING("DSTATE"), "", 0, 0, 0, 0, 0, 0, -1, 0
   },
 
@@ -189,15 +199,19 @@ static rtwCAPI_ModelParameters rtModelParameters[] =
 {
   /* addrMapIndex, varName, dataTypeIndex, dimIndex, fixPtIndex */
   {
-    23, TARGET_STRING("mMatrix"), 0, 1, 0
+    25, TARGET_STRING("mMatrix"), 0, 1, 0
   },
 
   {
-    24, TARGET_STRING("X3_DD"), 0, 2, 0
+    26, TARGET_STRING("Configuration"), 5, 0, 0
   },
 
   {
-    25, TARGET_STRING("X4_DD"), 0, 3, 0
+    27, TARGET_STRING("X3_DD"), 0, 2, 0
+  },
+
+  {
+    28, TARGET_STRING("X4_DD"), 0, 3, 0
   },
 
   {
@@ -210,36 +224,39 @@ static rtwCAPI_ModelParameters rtModelParameters[] =
 /* Initialize Data Address */
 static void Controller_InitializeDataAddr(void* dataAddr[],
   RT_MODEL_Controller_T *const Controller_M, BlockIO_Controller_T *Controller_B,
-  D_Work_Controller_T *Controller_DWork, InstP_Controller_T* Controller_InstP)
+  D_Work_Controller_T *Controller_DWork)
 {
   dataAddr[0] = (void*) (&Controller_B->DiscreteTimeIntegrator);
   dataAddr[1] = (void*) (&Controller_B->ConfigMW1);
   dataAddr[2] = (void*) (&Controller_B->ConfigMW2);
   dataAddr[3] = (void*) (&Controller_B->MatGain[0]);
-  dataAddr[4] = (void*) (&Controller_B->SuperDuperGainBlock);
-  dataAddr[5] = (void*) (&Controller_B->ModelRef1);
-  dataAddr[6] = (void*) (&Controller_B->ModelRef2);
-  dataAddr[7] = (void*) (&Controller_B->Sum);
-  dataAddr[8] = (void*) (&Controller_B->Sum3);
-  dataAddr[9] = (void*) (&Controller_B->Sum4[0]);
-  dataAddr[10] = (void*) (&Controller_B->Sum5[0]);
-  dataAddr[11] = (void*) (&Controller_B->AlgLoop);
-  dataAddr[12] = (void*) (&Controller_P.Constant_Value[0]);
-  dataAddr[13] = (void*) (&Controller_P.DiscreteTimeIntegrator_gainval);
-  dataAddr[14] = (void*) (&Controller_P.DiscreteTimeIntegrator_IC);
-  dataAddr[15] = (void*) (&Controller_P.ConfigMW1_Gain);
-  dataAddr[16] = (void*) (&Controller_P.ConfigMW2_Gain);
-  dataAddr[17] = (void*) (&Controller_P.SuperDuperGainBlock_Gain);
-  dataAddr[18] = (void*) (&Controller_M->
+  dataAddr[4] = (void*) (&Controller_B->MatGain1);
+  dataAddr[5] = (void*) (&Controller_B->SuperDuperGainBlock);
+  dataAddr[6] = (void*) (&Controller_B->ModelRef1);
+  dataAddr[7] = (void*) (&Controller_B->ModelRef2);
+  dataAddr[8] = (void*) (&Controller_B->Sum);
+  dataAddr[9] = (void*) (&Controller_B->Sum3);
+  dataAddr[10] = (void*) (&Controller_B->Sum4[0]);
+  dataAddr[11] = (void*) (&Controller_B->Sum5[0]);
+  dataAddr[12] = (void*) (&Controller_B->Sum6);
+  dataAddr[13] = (void*) (&Controller_B->AlgLoop);
+  dataAddr[14] = (void*) (&Controller_P.Constant_Value[0]);
+  dataAddr[15] = (void*) (&Controller_P.DiscreteTimeIntegrator_gainval);
+  dataAddr[16] = (void*) (&Controller_P.DiscreteTimeIntegrator_IC);
+  dataAddr[17] = (void*) (&Controller_P.ConfigMW1_Gain);
+  dataAddr[18] = (void*) (&Controller_P.ConfigMW2_Gain);
+  dataAddr[19] = (void*) (&Controller_P.SuperDuperGainBlock_Gain);
+  dataAddr[20] = (void*) (&Controller_M->
     Controller_InstP_ref->InstP_ModelRef1.SubmodelConfig);
-  dataAddr[19] = (void*) (&Controller_M->
+  dataAddr[21] = (void*) (&Controller_M->
     Controller_InstP_ref->InstP_ModelRef2.SubmodelConfig);
-  dataAddr[20] = (void*) (&Controller_P.AlgLoop_InitialCondition);
-  dataAddr[21] = (void*) (&Controller_DWork->DiscreteTimeIntegrator_DSTATE);
-  dataAddr[22] = (void*) (&Controller_DWork->AlgLoop_DSTATE);
-  dataAddr[23] = (void*) (&Controller_InstP->mMatrix[0]);
-  dataAddr[24] = (void*) (rtP_X3_DD);
-  dataAddr[25] = (void*) (rtP_X4_DD);
+  dataAddr[22] = (void*) (&Controller_P.AlgLoop_InitialCondition);
+  dataAddr[23] = (void*) (&Controller_DWork->DiscreteTimeIntegrator_DSTATE);
+  dataAddr[24] = (void*) (&Controller_DWork->AlgLoop_DSTATE);
+  dataAddr[25] = (void*) (&Controller_P.mMatrix[0]);
+  dataAddr[26] = (void*) (&rtP_Configuration);
+  dataAddr[27] = (void*) (rtP_X3_DD);
+  dataAddr[28] = (void*) (rtP_X4_DD);
 }
 
 #endif
@@ -285,6 +302,9 @@ static void Controller_InitializeLoggingFunctions(RTWLoggingFcnPtr loggingPtrs[]
   loggingPtrs[23] = (NULL);
   loggingPtrs[24] = (NULL);
   loggingPtrs[25] = (NULL);
+  loggingPtrs[26] = (NULL);
+  loggingPtrs[27] = (NULL);
+  loggingPtrs[28] = (NULL);
 }
 
 #endif
@@ -300,6 +320,25 @@ static TARGET_CONST rtwCAPI_DataTypeMap rtDataTypeMap[] =
 
   {
     "struct", "ConfigBus", 2, 1, sizeof(ConfigBus), SS_STRUCT, 0, 0, 0
+  },
+
+  {
+    "unsigned char", "boolean_T", 0, 0, sizeof(boolean_T), SS_BOOLEAN, 0, 0, 0
+  },
+
+  {
+    "struct", "TestConfiguration", 2, 3, sizeof(TestConfiguration), SS_STRUCT, 0,
+    0, 0
+  },
+
+  {
+    "struct", "SignalConfiguration", 1, 5, sizeof(SignalConfiguration),
+    SS_STRUCT, 0, 0, 0
+  },
+
+  {
+    "struct", "CoreConfiguration", 2, 6, sizeof(CoreConfiguration), SS_STRUCT, 0,
+    0, 0
   }
 };
 
@@ -321,6 +360,26 @@ static TARGET_CONST rtwCAPI_ElementMap rtElementMap[] =
 
   {
     "SomeOtherMember", rt_offsetof(ConfigBus, SomeOtherMember), 0, 0, 0
+  },
+
+  {
+    "TestModeEnabled", rt_offsetof(TestConfiguration, TestModeEnabled), 2, 0, 0
+  },
+
+  {
+    "Scaling", rt_offsetof(TestConfiguration, Scaling), 0, 0, 0
+  },
+
+  {
+    "Amplitude", rt_offsetof(SignalConfiguration, Amplitude), 0, 0, 0
+  },
+
+  {
+    "Test", rt_offsetof(CoreConfiguration, Test), 3, 0, 0
+  },
+
+  {
+    "Signal", rt_offsetof(CoreConfiguration, Signal), 4, 0, 0
   }
 };
 
@@ -404,14 +463,14 @@ static rtwCAPI_ModelMappingStaticInfo mmiStatic =
    * TargetType: targetType
    */
   {
-    rtBlockSignals, 12,
+    rtBlockSignals, 14,
     (NULL), 0,
     (NULL), 0
   },
 
   {
     rtBlockParameters, 9,
-    rtModelParameters, 2
+    rtModelParameters, 4
   },
 
   {
@@ -425,10 +484,10 @@ static rtwCAPI_ModelMappingStaticInfo mmiStatic =
   "float",
 
   {
-    2019395021U,
-    3993080173U,
-    1208987042U,
-    1815444537U
+    3844067988U,
+    2925227782U,
+    3187345138U,
+    1978606274U
   },
   (NULL), 0,
   0
@@ -458,8 +517,7 @@ void Controller_InitializeDataMapInfo(RT_MODEL_Controller_T *const Controller_M,
 
   /* Cache C-API Data Addresses into the Real-Time Model Data structure */
   Controller_InitializeDataAddr(Controller_M->DataMapInfo.dataAddress,
-    Controller_M, Controller_M->blockIO, Controller_M->dwork,
-    Controller_M->Controller_InstP_ref);
+    Controller_M, Controller_M->blockIO, Controller_M->dwork);
   rtwCAPI_SetDataAddressMap(Controller_M->DataMapInfo.mmi,
     Controller_M->DataMapInfo.dataAddress);
 

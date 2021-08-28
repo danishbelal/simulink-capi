@@ -4,8 +4,8 @@
  * Code generated for Simulink model 'ControllerRef'.
  *
  * Model version                  : 1.9
- * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Fri Jan  8 15:54:48 2021
+ * Simulink Coder version         : 9.4 (R2020b) 29-Jul-2020
+ * C/C++ source code generated on : Wed Aug 25 10:24:08 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -251,7 +251,7 @@ static rtwCAPI_ModelMappingStaticInfo mmiStatic =
 
   {
     rtBlockParameters, 1,
-    rtModelParameters, 0
+    rtModelParameters, 1
   },
 
   {
@@ -265,10 +265,10 @@ static rtwCAPI_ModelMappingStaticInfo mmiStatic =
   "float",
 
   {
-    109152588U,
-    3993525790U,
-    1511888997U,
-    1485973160U
+    368944127U,
+    1245914176U,
+    556516747U,
+    313082824U
   },
   (NULL), 0,
   0

@@ -4,8 +4,8 @@
  * Code generated for Simulink model 'ControllerRefRef'.
  *
  * Model version                  : 1.2
- * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Tue Jan  5 07:26:24 2021
+ * Simulink Coder version         : 9.4 (R2020b) 29-Jul-2020
+ * C/C++ source code generated on : Wed Aug 25 10:23:45 2021
  */
 
 #ifndef BUILTIN_TYPEID_TYPES_H

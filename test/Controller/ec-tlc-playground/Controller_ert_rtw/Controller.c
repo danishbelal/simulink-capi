@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'Controller'.
  *
- * Model version                  : 1.74
- * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Fri Jan  8 15:55:01 2021
+ * Model version                  : 3.4
+ * Simulink Coder version         : 9.4 (R2020b) 29-Jul-2020
+ * C/C++ source code generated on : Wed Aug 25 10:24:31 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -22,11 +22,8 @@ void Controller_step(RT_MODEL_Controller_T *const Controller_M,
                      ExternalInputs_Controller_T *Controller_U,
                      ExternalOutputs_Controller_T *Controller_Y)
 {
-  BlockIO_Controller_T *Controller_B = ((BlockIO_Controller_T *)
-    Controller_M->blockIO);
-  D_Work_Controller_T *Controller_DWork = ((D_Work_Controller_T *)
-    Controller_M->dwork);
-  InstP_Controller_T *Controller_InstP = Controller_M->Controller_InstP_ref;
+  BlockIO_Controller_T *Controller_B = Controller_M->blockIO;
+  D_Work_Controller_T *Controller_DWork = Controller_M->dwork;
   int32_T i;
   int32_T i_0;
   for (i = 0; i < 64; i++)
@@ -49,24 +46,22 @@ void Controller_step(RT_MODEL_Controller_T *const Controller_M,
     Controller_Y->X3[i] = Controller_U->e * rtP_X3_DD[i];
   }
 
-  /* Gain: '<Root>/MatGain' incorporates:
-   *  Constant: '<Root>/Constant'
-   */
   for (i = 0; i < 3; i++)
   {
     for (i_0 = 0; i_0 < 3; i_0++)
     {
+      /* Gain: '<Root>/MatGain' incorporates:
+       *  Constant: '<Root>/Constant'
+       */
       Controller_B->MatGain[i_0 + 3 * i] = 0.0;
-      Controller_B->MatGain[i_0 + 3 * i] += Controller_InstP->mMatrix[3 * i] *
+      Controller_B->MatGain[i_0 + 3 * i] += Controller_P.mMatrix[3 * i] *
         Controller_P.Constant_Value[i_0];
-      Controller_B->MatGain[i_0 + 3 * i] += Controller_InstP->mMatrix[3 * i + 1]
-        * Controller_P.Constant_Value[i_0 + 3];
-      Controller_B->MatGain[i_0 + 3 * i] += Controller_InstP->mMatrix[3 * i + 2]
-        * Controller_P.Constant_Value[i_0 + 6];
+      Controller_B->MatGain[i_0 + 3 * i] += Controller_P.mMatrix[3 * i + 1] *
+        Controller_P.Constant_Value[i_0 + 3];
+      Controller_B->MatGain[i_0 + 3 * i] += Controller_P.mMatrix[3 * i + 2] *
+        Controller_P.Constant_Value[i_0 + 6];
     }
   }
-
-  /* End of Gain: '<Root>/MatGain' */
 
   /* ModelReference: '<Root>/ModelRef1' incorporates:
    *  Inport: '<Root>/e'
@@ -82,8 +77,16 @@ void Controller_step(RT_MODEL_Controller_T *const Controller_M,
                 &Controller_U->e, &Controller_B->ModelRef2,
                 &(Controller_DWork->ModelRef2_InstanceData.rtb));
 
+  /* Gain: '<Root>/MatGain1' incorporates:
+   *  Inport: '<Root>/e'
+   */
+  Controller_B->MatGain1 = rtP_Configuration.Signal.Amplitude * Controller_U->e;
+
+  /* Sum: '<Root>/Sum6' */
+  Controller_B->Sum6 = Controller_B->ModelRef2 + Controller_B->MatGain1;
+
   /* Sum: '<Root>/Sum3' */
-  Controller_B->Sum3 = Controller_B->ModelRef1 + Controller_B->ModelRef2;
+  Controller_B->Sum3 = Controller_B->ModelRef1 + Controller_B->Sum6;
 
   /* Gain: '<Root>/ConfigMW2' incorporates:
    *  Inport: '<Root>/e'
@@ -96,16 +99,21 @@ void Controller_step(RT_MODEL_Controller_T *const Controller_M,
   Controller_B->ConfigMW1 = Controller_P.ConfigMW1_Gain * Controller_U->e;
   for (i = 0; i < 9; i++)
   {
-    /* Sum: '<Root>/Sum4' */
+    /* Sum: '<Root>/Sum4' incorporates:
+     *  Gain: '<Root>/MatGain'
+     */
     Controller_B->Sum4[i] = Controller_B->MatGain[i] + Controller_B->Sum3;
 
-    /* Sum: '<Root>/Sum5' */
+    /* Sum: '<Root>/Sum5' incorporates:
+     *  Sum: '<Root>/Sum4'
+     */
     Controller_B->Sum5[i] = Controller_B->ConfigMW2 + Controller_B->Sum4[i];
 
     /* Outport: '<Root>/ScaledInput' incorporates:
      *  Sum: '<Root>/Sum2'
+     *  Sum: '<Root>/Sum5'
      */
-    Controller_Y->y_m[i] = Controller_B->ConfigMW1 + Controller_B->Sum5[i];
+    Controller_Y->y[i] = Controller_B->ConfigMW1 + Controller_B->Sum5[i];
   }
 
   /* UnitDelay: '<Root>/AlgLoop' */
@@ -127,13 +135,13 @@ void Controller_step(RT_MODEL_Controller_T *const Controller_M,
   /* Outport: '<Root>/y' incorporates:
    *  Sum: '<Root>/Sum1'
    */
-  Controller_Y->y = Controller_B->SuperDuperGainBlock +
+  Controller_Y->y_i = Controller_B->SuperDuperGainBlock +
     Controller_B->DiscreteTimeIntegrator;
 
   /* Update for UnitDelay: '<Root>/AlgLoop' incorporates:
    *  Outport: '<Root>/y'
    */
-  Controller_DWork->AlgLoop_DSTATE = Controller_Y->y;
+  Controller_DWork->AlgLoop_DSTATE = Controller_Y->y_i;
 
   /* Update for DiscreteIntegrator: '<Root>/Discrete-Time Integrator' */
   Controller_DWork->DiscreteTimeIntegrator_DSTATE +=
@@ -146,11 +154,8 @@ void Controller_initialize(RT_MODEL_Controller_T *const Controller_M,
   ExternalInputs_Controller_T *Controller_U, ExternalOutputs_Controller_T
   *Controller_Y)
 {
-  D_Work_Controller_T *Controller_DWork = ((D_Work_Controller_T *)
-    Controller_M->dwork);
-  BlockIO_Controller_T *Controller_B = ((BlockIO_Controller_T *)
-    Controller_M->blockIO);
-  InstP_Controller_T *Controller_InstP = Controller_M->Controller_InstP_ref;
+  D_Work_Controller_T *Controller_DWork = Controller_M->dwork;
+  BlockIO_Controller_T *Controller_B = Controller_M->blockIO;
 
   /* Registration code */
 

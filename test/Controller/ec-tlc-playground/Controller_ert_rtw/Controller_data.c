@@ -3,9 +3,9 @@
  *
  * Code generated for Simulink model 'Controller'.
  *
- * Model version                  : 1.74
- * Simulink Coder version         : 9.2 (R2019b) 18-Jul-2019
- * C/C++ source code generated on : Fri Jan  8 15:55:01 2021
+ * Model version                  : 3.4
+ * Simulink Coder version         : 9.4 (R2020b) 29-Jul-2020
+ * C/C++ source code generated on : Wed Aug 25 10:24:31 2021
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Windows64)
@@ -17,6 +17,20 @@
 #include "Controller_private.h"
 
 /* Model block global parameters (default storage) */
+CoreConfiguration rtP_Configuration =
+{
+  {
+    false,
+    0.6
+  },
+
+  {
+    1.2
+  }
+} ;                                    /* Variable: Configuration
+                                        * Referenced by: '<Root>/MatGain1'
+                                        */
+
 real_T rtP_X3_DD[27] =
 {
   1.0, 4.0, 7.0, 2.0, 5.0, 8.0, 3.0, 6.0, 9.0, 1.0, 4.0, 7.0, 2.0, 5.0, 8.0, 3.0,
@@ -39,6 +53,13 @@ real_T rtP_X4_DD[64] =
 /* Block parameters (default storage) */
 Parameters_Controller_T Controller_P =
 {
+  /* Variable: mMatrix
+   * Referenced by: '<Root>/MatGain'
+   */
+  {
+    1.0, 3.0, 6.0, 2.0, 4.0, 7.0, 3.0, 5.0, 8.0
+  },
+
   /* Expression: eye(3)
    * Referenced by: '<Root>/Constant'
    */
