@@ -39,6 +39,9 @@
 
 #ifdef ENABLE_RUNTIME_TYPE_CHECKING
 #include "cleantype.hpp"
+#define ENABLE_RUNTIME_TYPE_CHECKING_VALUE true
+#else
+#define ENABLE_RUNTIME_TYPE_CHECKING_VALUE false
 #endif
 
 namespace db
@@ -64,6 +67,7 @@ using Signals = CapiAccessor<rtwCAPI_Signals, TypeCheckingEnabled>;
 template <typename WrappedElement, bool TypeCheckingEnabled>
 class CapiAccessor
 {
+    static_assert(TypeCheckingEnabled ? ENABLE_RUNTIME_TYPE_CHECKING_VALUE : true, "To use typechecking the preprocessor flag ENABLE_RUNTIME_TYPE_CHECKING must be set.");
     rtwCAPI_ModelMappingInfo& mMMI;
 
 public:
@@ -204,6 +208,7 @@ T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::FindInStaticMMI(rtwCAPI_Mo
         std::string CurrentParameter { db::simulink::GetName<WrappedElement>(MMI, i) };
         if (CurrentParameter == PathAndName)
         {
+#ifdef ENABLE_RUNTIME_TYPE_CHECKING
             if constexpr (TypeCheckingEnabled)
             {
                 std::size_t DataTypeIndex { db::simulink::GetDataTypeIdx(Data, i) };
@@ -217,6 +222,7 @@ T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::FindInStaticMMI(rtwCAPI_Mo
                     return nullptr;
                 }
             }
+#endif
             Error = CapiError::None;
             const std::size_t AddrIndex { db::simulink::GetAddrIdx(Data, i) };
             return db::simulink::GetDataAddress<T>(AddrMap, AddrIndex);
@@ -224,6 +230,6 @@ T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::FindInStaticMMI(rtwCAPI_Mo
     }
     return nullptr;
 }
-}
-}
+} // namespace simulink
+} // namespace db
 #endif
