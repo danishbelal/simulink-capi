@@ -26,8 +26,8 @@
 
 /// \file
 
-#ifndef _ACCESSOR_HELPER_HPP_
-#define _ACCESSOR_HELPER_HPP_
+#ifndef ACCESSOR_HELPER_HPP
+#define ACCESSOR_HELPER_HPP
 
 #include "rtw_capi.h"
 #include "rtw_modelmap.h"

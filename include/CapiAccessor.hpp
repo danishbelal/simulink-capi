@@ -24,8 +24,8 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef _PARAMETER_HPP_
-#define _PARAMETER_HPP_
+#ifndef CAPI_ACCESSOR_HPP
+#define CAPI_ACCESSOR_HPP
 
 #include <exception>
 #include <functional>
