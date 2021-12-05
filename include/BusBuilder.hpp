@@ -146,6 +146,6 @@ private:
     const rtwCAPI_DataTypeMap* mDataTypeMap;
     const CapiElement* mElement;
 };
-}
-}
+} // namespace simulink
+} // namespace db
 #endif
