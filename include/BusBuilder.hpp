@@ -89,9 +89,7 @@ public:
         T* Result {};
 
         auto Element { std::find_if(begin(), end(), [MemberName](auto& e) {
-            if (MemberName == e.elementName)
-                return true;
-            return false;
+            return MemberName == e.elementName;
         }) };
 
         if (Element != end())
