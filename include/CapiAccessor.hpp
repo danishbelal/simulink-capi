@@ -55,13 +55,13 @@ constexpr auto DISABLE_TYPECHECKING = false;
 template <typename WrappedElement, bool TypeCheckingEnabled>
 class CapiAccessor;
 
-template <bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
+template <bool TypeCheckingEnabled = ENABLE_RUNTIME_TYPE_CHECKING_VALUE>
 using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters, TypeCheckingEnabled>;
-template <bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
+template <bool TypeCheckingEnabled = ENABLE_RUNTIME_TYPE_CHECKING_VALUE>
 using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters, TypeCheckingEnabled>;
-template <bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
+template <bool TypeCheckingEnabled = ENABLE_RUNTIME_TYPE_CHECKING_VALUE>
 using States = CapiAccessor<rtwCAPI_States, TypeCheckingEnabled>;
-template <bool TypeCheckingEnabled = ENABLE_TYPECHECKING>
+template <bool TypeCheckingEnabled = ENABLE_RUNTIME_TYPE_CHECKING_VALUE>
 using Signals = CapiAccessor<rtwCAPI_Signals, TypeCheckingEnabled>;
 
 template <typename WrappedElement, bool TypeCheckingEnabled>
