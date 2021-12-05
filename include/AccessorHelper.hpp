@@ -247,15 +247,6 @@ constexpr std::string GetName(rtwCAPI_ModelMappingInfo& MMI, const CapiElement& 
     }
 }
 
-template <typename CapiElement>
-constexpr std::string GetName(rtwCAPI_ModelMappingInfo& MMI, const std::size_t Index)
-{
-    static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
-
-    const CapiElement* const Element { GetRawData<CapiElement>(MMI) };
-    return GetName<CapiElement>(MMI, Element[Index]);
-}
-
 template <typename T>
 constexpr std::string GetTypeName(const rtwCAPI_DataTypeMap* const Map, const std::size_t Index)
 {

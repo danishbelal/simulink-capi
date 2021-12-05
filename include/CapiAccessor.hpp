@@ -205,7 +205,8 @@ T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::FindInStaticMMI(rtwCAPI_Mo
     // TODO: replace with std search algorithm
     for (std::size_t i {}; i < NumElements; ++i)
     {
-        std::string CurrentParameter { db::simulink::GetName<WrappedElement>(MMI, i) };
+        auto& CurrentElement { Data[i] };
+        std::string CurrentParameter { db::simulink::GetName<WrappedElement>(MMI, CurrentElement) };
         if (CurrentParameter == PathAndName)
         {
 #ifdef ENABLE_RUNTIME_TYPE_CHECKING
