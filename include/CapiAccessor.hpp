@@ -1,9 +1,9 @@
 // Copyright (c) 2020-2021, Danish Belal.
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice, this
 //    list of conditions and the following disclaimer.
 // 2. Redistributions in binary form must reproduce the above copyright notice,
@@ -12,7 +12,7 @@
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software without
 //    specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 // ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -202,34 +202,40 @@ T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::FindInStaticMMI(rtwCAPI_Mo
     const auto Data { db::simulink::GetRawData<WrappedElement>(MMI) };
     void* const* const AddrMap { rtwCAPI_GetDataAddressMap(&MMI) };
 
-    // TODO: replace with std search algorithm
-    for (std::size_t i {}; i < NumElements; ++i)
-    {
-        auto& CurrentElement { Data[i] };
-        std::string CurrentParameter { db::simulink::GetName<WrappedElement>(MMI, CurrentElement) };
-        if (CurrentParameter == PathAndName)
-        {
-#ifdef ENABLE_RUNTIME_TYPE_CHECKING
-            if constexpr (TypeCheckingEnabled)
-            {
-                std::size_t DataTypeIndex { db::simulink::GetDataTypeIdx(Data, i) };
-                auto DataTypeMap { db::simulink::GetRawData<rtwCAPI_DataTypeMap>(MMI) };
-                std::string ActualType { db::simulink::GetTypeName<T>(DataTypeMap, DataTypeIndex) };
-                std::string DeducedType { cleantype::clean<std::remove_reference_t<T>>() };
+    // Find the element with the given name (+ path)
+    auto Result = std::find_if(Data, Data + NumElements, [&](const WrappedElement& Element) {
+        return PathAndName == db::simulink::GetName<WrappedElement>(MMI, Element);
+    });
 
-                if (ActualType != DeducedType)
-                {
-                    Error = CapiError::TypeMismatch;
-                    return nullptr;
-                }
-            }
-#endif
-            Error = CapiError::None;
-            const std::size_t AddrIndex { db::simulink::GetAddrIdx(Data, i) };
-            return db::simulink::GetDataAddress<T>(AddrMap, AddrIndex);
+    if (Result == (Data + NumElements))
+    {
+        Error = CapiError::NotFound;
+        return nullptr;
+    }
+
+    // Some getters do unfortunately depend on the index.  As a temporary workaround,
+    // this index is calculated through pointer arithmetic.
+    const auto Offset { static_cast<std::size_t>(Result - Data) };
+
+#ifdef ENABLE_RUNTIME_TYPE_CHECKING
+    if constexpr (TypeCheckingEnabled)
+    {
+        std::size_t DataTypeIndex { db::simulink::GetDataTypeIdx(Data, Offset) };
+        auto DataTypeMap { db::simulink::GetRawData<rtwCAPI_DataTypeMap>(MMI) };
+        std::string ActualType { db::simulink::GetTypeName<T>(DataTypeMap, DataTypeIndex) };
+        std::string DeducedType { cleantype::clean<std::remove_reference_t<T>>() };
+
+        if (ActualType != DeducedType)
+        {
+            Error = CapiError::TypeMismatch;
+            return nullptr;
         }
     }
-    return nullptr;
+#endif
+
+    Error = CapiError::None;
+    const std::size_t AddrIndex { db::simulink::GetAddrIdx(Data, Offset) };
+    return db::simulink::GetDataAddress<T>(AddrMap, AddrIndex);
 }
 } // namespace simulink
 } // namespace db
