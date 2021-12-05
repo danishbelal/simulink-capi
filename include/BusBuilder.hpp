@@ -70,15 +70,10 @@ public:
         auto Data { db::simulink::GetRawData<CapiElement>(MMI) };
 
         // Search for the Element.
-        for (std::size_t i {}; mElement == nullptr && i < NumElements; ++i)
-        {
-            std::string CurrentParameter { db::simulink::GetName<CapiElement>(MMI, i) };
-            if (CurrentParameter == PathAndName)
-            {
-                mElement = &Data[i];
-                break;
-            }
-        }
+        mElement = std::find_if(Data, Data + NumElements, [&](const CapiElement& Element) {
+            std::string Name { db::simulink::GetName<CapiElement>(MMI, Element) };
+            return Name == PathAndName;
+        });
 
         // Element found?
         if (mElement == nullptr)

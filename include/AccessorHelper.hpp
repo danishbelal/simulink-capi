@@ -1,9 +1,9 @@
 // Copyright (c) 2020-2021, Danish Belal.
 // All rights reserved.
-// 
+//
 // Redistribution and use in source and binary forms, with or without modification,
 // are permitted provided that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice, this
 //    list of conditions and the following disclaimer.
 // 2. Redistributions in binary form must reproduce the above copyright notice,
@@ -12,7 +12,7 @@
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software without
 //    specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 // ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -204,11 +204,9 @@ constexpr const CapiElement* GetRawData(rtwCAPI_ModelMappingInfo& MMI) noexcept
 }
 
 template <typename CapiElement>
-constexpr std::string GetName(rtwCAPI_ModelMappingInfo& MMI, const std::size_t Index)
+constexpr std::string GetName(rtwCAPI_ModelMappingInfo& MMI, const CapiElement& Element)
 {
     static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
-
-    const CapiElement* const Element { GetRawData<CapiElement>(MMI) };
 
     std::string Path {};
     if constexpr (has_blockpath<CapiElement>())
@@ -219,34 +217,43 @@ constexpr std::string GetName(rtwCAPI_ModelMappingInfo& MMI, const std::size_t I
             Path.append("/");
         }
 
-        Path.append(Element[Index].blockPath);
+        Path.append(Element.blockPath);
     }
 
     if constexpr (std::is_same_v<CapiElement, rtwCAPI_States>)
     {
-        std::string StateName { Element[Index].stateName };
+        std::string StateName { Element.stateName };
         return Path + "/" + StateName;
     }
     else if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
     {
-        std::string ParamName { Element[Index].paramName };
+        std::string ParamName { Element.paramName };
         return Path += "/" + ParamName;
     }
     else if constexpr (std::is_same_v<CapiElement, rtwCAPI_ModelParameters>)
     {
-        return Element[Index].varName;
+        return Element.varName;
     }
     else if constexpr (std::is_same_v<CapiElement, rtwCAPI_Signals>)
     {
         // Signals have no name, usually. Therefore the Name
         // and the prepending "/" are only appended if its nonempty.
-        std::string SignalName { Element[Index].signalName };
+        std::string SignalName { Element.signalName };
         if (!SignalName.empty())
         {
             Path = "/" + SignalName;
         }
         return Path;
     }
+}
+
+template <typename CapiElement>
+constexpr std::string GetName(rtwCAPI_ModelMappingInfo& MMI, const std::size_t Index)
+{
+    static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
+
+    const CapiElement* const Element { GetRawData<CapiElement>(MMI) };
+    return GetName<CapiElement>(MMI, Element[Index]);
 }
 
 template <typename T>
@@ -277,6 +284,6 @@ constexpr rtwCAPI_ModelMappingInfo& MMI(ModelStruct& MS) noexcept
         "or you didnt enable the C API.");
     return MS.DataMapInfo.mmi;
 }
-}
-}
+} // namespace simulink
+} // namespace db
 #endif
