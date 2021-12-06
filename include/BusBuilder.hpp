@@ -76,7 +76,7 @@ public:
         });
 
         // Element found?
-        if (mElement == nullptr)
+        if (mElement == (Data + NumElements))
         {
             // CapiError Error { CapiError::NotFound };
             throw std::runtime_error("Element not found.");
