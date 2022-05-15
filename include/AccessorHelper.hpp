@@ -139,68 +139,87 @@ constexpr std::string GetBlockPath(const CapiElement* const Element, const std::
 }
 
 template <typename CapiElement>
-constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI) noexcept
+inline constexpr std::size_t GetCount(const rtwCAPI_ModelMappingInfo& MMI) noexcept;
+
+template <>
+inline constexpr std::size_t GetCount<rtwCAPI_BlockParameters>(const rtwCAPI_ModelMappingInfo& MMI) noexcept
 {
-    static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
-    if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
-    {
-        return MMI.staticMap->Params.numBlockParameters;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_ModelParameters>)
-    {
-        return MMI.staticMap->Params.numModelParameters;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_Signals>)
-    {
-        return MMI.staticMap->Signals.numSignals;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_States>)
-    {
-        return MMI.staticMap->States.numStates;
-    }
+    return MMI.staticMap->Params.numBlockParameters;
+}
+
+template <>
+inline constexpr std::size_t GetCount<rtwCAPI_ModelParameters>(const rtwCAPI_ModelMappingInfo& MMI) noexcept
+{
+    return MMI.staticMap->Params.numModelParameters;
+}
+
+template <>
+inline constexpr std::size_t GetCount<rtwCAPI_Signals>(const rtwCAPI_ModelMappingInfo& MMI) noexcept
+{
+    return MMI.staticMap->Signals.numSignals;
+}
+
+template <>
+inline constexpr std::size_t GetCount<rtwCAPI_States>(const rtwCAPI_ModelMappingInfo& MMI) noexcept
+{
+    return MMI.staticMap->States.numStates;
 }
 
 template <typename CapiElement>
-constexpr const CapiElement* GetRawData(rtwCAPI_ModelMappingInfo& MMI) noexcept
+inline constexpr const CapiElement* GetRawData(rtwCAPI_ModelMappingInfo& MMI) noexcept;
+
+template <>
+inline constexpr const rtwCAPI_BlockParameters* GetRawData<rtwCAPI_BlockParameters>(rtwCAPI_ModelMappingInfo& MMI) noexcept
 {
-    constexpr bool ValidElement = is_capi_element<CapiElement>() || is_capi_map<CapiElement>();
-    static_assert(ValidElement, "Incompatible C-API Element!");
-    if constexpr (std::is_same_v<CapiElement, rtwCAPI_BlockParameters>)
-    {
-        return MMI.staticMap->Params.blockParameters;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_ModelParameters>)
-    {
-        return MMI.staticMap->Params.modelParameters;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_Signals>)
-    {
-        return MMI.staticMap->Signals.signals;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_States>)
-    {
-        return MMI.staticMap->States.states;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_DataTypeMap>)
-    {
-        return MMI.staticMap->Maps.dataTypeMap;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_DimensionMap>)
-    {
-        return MMI.staticMap->Maps.dimensionMap;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_FixPtMap>)
-    {
-        return MMI.staticMap->Maps.fixPtMap;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_ElementMap>)
-    {
-        return MMI.staticMap->Maps.elementMap;
-    }
-    else if constexpr (std::is_same_v<CapiElement, rtwCAPI_SampleTimeMap>)
-    {
-        return MMI.staticMap->Maps.sampleTimeMap;
-    }
+    return MMI.staticMap->Params.blockParameters;
+}
+
+template <>
+inline constexpr const rtwCAPI_ModelParameters* GetRawData<rtwCAPI_ModelParameters>(rtwCAPI_ModelMappingInfo& MMI) noexcept
+{
+    return MMI.staticMap->Params.modelParameters;
+}
+
+template <>
+inline constexpr const rtwCAPI_Signals* GetRawData<rtwCAPI_Signals>(rtwCAPI_ModelMappingInfo& MMI) noexcept
+{
+    return MMI.staticMap->Signals.signals;
+}
+
+template <>
+inline constexpr const rtwCAPI_States* GetRawData<rtwCAPI_States>(rtwCAPI_ModelMappingInfo& MMI) noexcept
+{
+    return MMI.staticMap->States.states;
+}
+
+template <>
+inline constexpr const rtwCAPI_DataTypeMap* GetRawData<rtwCAPI_DataTypeMap>(rtwCAPI_ModelMappingInfo& MMI) noexcept
+{
+    return MMI.staticMap->Maps.dataTypeMap;
+}
+
+template <>
+inline constexpr const rtwCAPI_DimensionMap* GetRawData<rtwCAPI_DimensionMap>(rtwCAPI_ModelMappingInfo& MMI) noexcept
+{
+    return MMI.staticMap->Maps.dimensionMap;
+}
+
+template <>
+inline constexpr const rtwCAPI_FixPtMap* GetRawData<rtwCAPI_FixPtMap>(rtwCAPI_ModelMappingInfo& MMI) noexcept
+{
+    return MMI.staticMap->Maps.fixPtMap;
+}
+
+template <>
+inline constexpr const rtwCAPI_ElementMap* GetRawData<rtwCAPI_ElementMap>(rtwCAPI_ModelMappingInfo& MMI) noexcept
+{
+    return MMI.staticMap->Maps.elementMap;
+}
+
+template <>
+inline constexpr const rtwCAPI_SampleTimeMap* GetRawData<rtwCAPI_SampleTimeMap>(rtwCAPI_ModelMappingInfo& MMI) noexcept
+{
+    return MMI.staticMap->Maps.sampleTimeMap;
 }
 
 template <typename CapiElement>
