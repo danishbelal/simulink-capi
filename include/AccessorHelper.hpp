@@ -117,25 +117,25 @@ constexpr std::size_t GetAddrIdx(const CapiElement& BP) noexcept
 }
 
 template <typename CapiElement>
-constexpr std::size_t GetDataTypeIdx(const CapiElement* const Element, const std::size_t Index) noexcept
+constexpr std::size_t GetDataTypeIdx(const CapiElement& Element) noexcept
 {
     static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
-    return Element[Index].dataTypeIndex;
+    return Element.dataTypeIndex;
 }
 
 template <typename CapiElement>
-constexpr std::size_t GetDimensionIdx(const CapiElement* const Element, const std::size_t Index) noexcept
+constexpr std::size_t GetDimensionIdx(const CapiElement& Element) noexcept
 {
     static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
-    return Element[Index].dimIndex;
+    return Element.dimIndex;
 }
 
 template <typename CapiElement>
-constexpr std::string GetBlockPath(const CapiElement* const Element, const std::size_t Index) noexcept
+constexpr std::string GetBlockPath(const CapiElement& Element) noexcept
 {
     constexpr bool BlockPathAvailable = has_blockpath<CapiElement>();
     static_assert(BlockPathAvailable, "Block Path only available on BlockParameters, Signals and States");
-    return Element[Index].blockPath;
+    return Element.blockPath;
 }
 
 template <typename CapiElement>
@@ -267,15 +267,15 @@ constexpr std::string GetName(rtwCAPI_ModelMappingInfo& MMI, const CapiElement& 
 }
 
 template <typename T>
-constexpr std::string GetTypeName(const rtwCAPI_DataTypeMap* const Map, const std::size_t Index)
+constexpr std::string GetTypeName(const rtwCAPI_DataTypeMap& Map)
 {
     if constexpr (std::is_class_v<T>)
     {
-        return Map[Index].mwDataName;
+        return Map.mwDataName;
     }
     else
     {
-        return Map[Index].cDataName;
+        return Map.cDataName;
     }
 }
 
