@@ -110,10 +110,10 @@ constexpr bool has_blockpath()
 // do the same thing.  I define the following functions to unify
 // the access to some common members.
 template <typename CapiElement>
-constexpr std::size_t GetAddrIdx(const CapiElement* const BP, const std::size_t Index) noexcept
+constexpr std::size_t GetAddrIdx(const CapiElement& BP) noexcept
 {
     static_assert(is_capi_element<CapiElement>(), "Incompatible C-API Element!");
-    return BP[Index].addrMapIndex;
+    return BP.addrMapIndex;
 }
 
 template <typename CapiElement>

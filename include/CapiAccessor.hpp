@@ -198,12 +198,8 @@ T* CapiAccessor<WrappedElement>::FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, 
         return nullptr;
     }
 
-    // Some getters do unfortunately depend on the index.  As a temporary workaround,
-    // this index is calculated through pointer arithmetic.
-    const auto Offset { static_cast<std::size_t>(Result - Data) };
-
     Error = CapiError::None;
-    const std::size_t AddrIndex { db::simulink::GetAddrIdx(Data, Offset) };
+    const std::size_t AddrIndex { db::simulink::GetAddrIdx(*Result) };
     return db::simulink::GetDataAddress<T>(AddrMap, AddrIndex);
 }
 } // namespace simulink

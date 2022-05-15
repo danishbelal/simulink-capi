@@ -73,7 +73,7 @@ protected:
             std::string CurrentName { db::simulink::GetName<CapiElement>(MMI(), CurrentElement) };
             if (CurrentName == PathAndName)
             {
-                AddrMapIdx = db::simulink::GetAddrIdx(CapiInstance, i);
+                AddrMapIdx = db::simulink::GetAddrIdx(CapiInstance[i]);
                 break;
             }
         }
