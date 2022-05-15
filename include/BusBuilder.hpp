@@ -62,7 +62,7 @@ public:
         , mElement(nullptr)
     {
         // Get the actual element.
-        CapiAccessor<CapiElement, DISABLE_TYPECHECKING> Accessor(MMI);
+        CapiAccessor<CapiElement> Accessor(MMI);
         mData = Accessor.template ptr<void>(PathAndName);
 
         // Find the C-API Element. It contains required meta-information.

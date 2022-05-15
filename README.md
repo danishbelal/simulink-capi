@@ -53,27 +53,6 @@ This approach requires less type information. Therefore its easier to obtain
 new parameter values through deserialization as no `ConfigBus` objects need
 to be created.
 
-## Runtime type checking
-Runtime type checking is supported. It can be enabled by `#define ENABLE_RUNTIME_TYPE_CHECKING`.
-Using the wrong type leads to an exception being thrown.
-
-Runtime type checking requires [cleantype](https://github.com/pthom/cleantype).
-Make sure its in your include path.
-```C++
-using namespace db::simulink;
-BlockParameters bp { MMI(ModelStruct) };
-
-// double is ok...
-bp.get<double>("Controller/Discrete-Time Integrator/gainval") = 13.4;
-
-// but int is not
-bp.get<int>("Controller/Discrete-Time Integrator/gainval") = 13;
-```
-```console
-terminate called after throwing an instance of 'std::runtime_error'
-  what():  Type mismatch (double vs. int)
-```
-
 ## Roadmap
  - Enable access to nested bus members without explicit instantiation
  - Make the library work without a heap

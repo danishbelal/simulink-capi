@@ -48,10 +48,10 @@ protected:
     }
 };
 
-using BlockParameters = db::simulink::BlockParameters<>;
-using ModelParameters = db::simulink::ModelParameters<>;
-using States = db::simulink::States<>;
-using Signals = db::simulink::Signals<>;
+using BlockParameters = db::simulink::BlockParameters;
+using ModelParameters = db::simulink::ModelParameters;
+using States = db::simulink::States;
+using Signals = db::simulink::Signals;
 
 TEST_F(TestCapiAccessorRef, BlockParameterGet)
 {

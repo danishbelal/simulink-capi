@@ -36,8 +36,3 @@ set(LibSrc "${LibDir}/CapiAccessor.hpp"
 add_library(SimulinkCAPI INTERFACE)
 target_sources(SimulinkCAPI INTERFACE "${LibSrc}")
 target_include_directories(SimulinkCAPI INTERFACE "${LibDir}")
-
-if(SLCAPI_RUNTIME_TYPE_CHECKING)
-    target_link_libraries(SimulinkCAPI INTERFACE CleanType)
-    target_compile_definitions(SimulinkCAPI INTERFACE ENABLE_RUNTIME_TYPE_CHECKING)
-endif()

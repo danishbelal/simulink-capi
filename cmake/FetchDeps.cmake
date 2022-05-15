@@ -24,23 +24,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-function(FetchCleantype)
-    include(FetchContent)
-    # fetch cleantype
-    FetchContent_Declare(cleantype
-        GIT_REPOSITORY https://github.com/pthom/cleantype.git)
-    FetchContent_GetProperties(cleantype)
-    if(NOT cleantype_POPULATED)
-        message("Fetching cleantype")
-        FetchContent_Populate(cleantype)
-        # DO NOT exec add_subdirectory() on this one.
-    endif()
-    set(CleantypeDir "${cleantype_SOURCE_DIR}/include_all_in_one/include/cleantype")
-    add_library(CleanType INTERFACE)
-    target_sources(CleanType INTERFACE "${CleantypeDir}/cleantype.hpp")
-    target_include_directories(CleanType INTERFACE "${CleantypeDir}")
-endfunction()
-
 function(FetchGoogleTest)
   # google test
   include(FetchContent)

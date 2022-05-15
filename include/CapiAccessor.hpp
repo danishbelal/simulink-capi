@@ -37,37 +37,22 @@
 #include "CapiError.hpp"
 #include "ModelTraits.hpp"
 
-#ifdef ENABLE_RUNTIME_TYPE_CHECKING
-#include "cleantype.hpp"
-#define ENABLE_RUNTIME_TYPE_CHECKING_VALUE true
-#else
-#define ENABLE_RUNTIME_TYPE_CHECKING_VALUE false
-#endif
-
 namespace db
 {
 namespace simulink
 {
 
-constexpr auto ENABLE_TYPECHECKING = true;
-constexpr auto DISABLE_TYPECHECKING = false;
-
-template <typename WrappedElement, bool TypeCheckingEnabled>
+template <typename WrappedElement>
 class CapiAccessor;
 
-template <bool TypeCheckingEnabled = ENABLE_RUNTIME_TYPE_CHECKING_VALUE>
-using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters, TypeCheckingEnabled>;
-template <bool TypeCheckingEnabled = ENABLE_RUNTIME_TYPE_CHECKING_VALUE>
-using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters, TypeCheckingEnabled>;
-template <bool TypeCheckingEnabled = ENABLE_RUNTIME_TYPE_CHECKING_VALUE>
-using States = CapiAccessor<rtwCAPI_States, TypeCheckingEnabled>;
-template <bool TypeCheckingEnabled = ENABLE_RUNTIME_TYPE_CHECKING_VALUE>
-using Signals = CapiAccessor<rtwCAPI_Signals, TypeCheckingEnabled>;
+using BlockParameters = CapiAccessor<rtwCAPI_BlockParameters>;
+using ModelParameters = CapiAccessor<rtwCAPI_ModelParameters>;
+using States = CapiAccessor<rtwCAPI_States>;
+using Signals = CapiAccessor<rtwCAPI_Signals>;
 
-template <typename WrappedElement, bool TypeCheckingEnabled>
+template <typename WrappedElement>
 class CapiAccessor
 {
-    static_assert(TypeCheckingEnabled ? ENABLE_RUNTIME_TYPE_CHECKING_VALUE : true, "To use typechecking the preprocessor flag ENABLE_RUNTIME_TYPE_CHECKING must be set.");
     rtwCAPI_ModelMappingInfo& mMMI;
 
 public:
@@ -132,29 +117,29 @@ public:
     T* FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error);
 }; // end of class CapiAccessor.
 
-template <typename WrappedElement, bool TypeCheckingEnabled>
-CapiAccessor<WrappedElement, TypeCheckingEnabled>::CapiAccessor(rtwCAPI_ModelMappingInfo& MMI)
+template <typename WrappedElement>
+CapiAccessor<WrappedElement>::CapiAccessor(rtwCAPI_ModelMappingInfo& MMI)
     : mMMI(MMI)
 {
 }
 
-template <typename WrappedElement, bool TypeCheckingEnabled>
+template <typename WrappedElement>
 template <typename T>
-T& CapiAccessor<WrappedElement, TypeCheckingEnabled>::get(const std::string& PathAndName)
+T& CapiAccessor<WrappedElement>::get(const std::string& PathAndName)
 {
     return *ptr<T>(PathAndName);
 }
 
-template <typename WrappedElement, bool TypeCheckingEnabled>
+template <typename WrappedElement>
 template <typename T>
-T& CapiAccessor<WrappedElement, TypeCheckingEnabled>::get(const std::string& PathAndName, CapiError& Error)
+T& CapiAccessor<WrappedElement>::get(const std::string& PathAndName, CapiError& Error)
 {
     return *ptr<T>(PathAndName, Error);
 }
 
-template <typename WrappedElement, bool TypeCheckingEnabled>
+template <typename WrappedElement>
 template <typename T>
-T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::ptr(const std::string& PathAndName)
+T* CapiAccessor<WrappedElement>::ptr(const std::string& PathAndName)
 {
     CapiError Error;
     auto E { ptr<T>(PathAndName, Error) };
@@ -166,9 +151,9 @@ T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::ptr(const std::string& Pat
     return E;
 }
 
-template <typename WrappedElement, bool TypeCheckingEnabled>
+template <typename WrappedElement>
 template <typename T>
-T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::ptr(const std::string& PathAndName, CapiError& Error)
+T* CapiAccessor<WrappedElement>::ptr(const std::string& PathAndName, CapiError& Error)
 {
     auto E { FindInMMI<T>(mMMI, PathAndName, Error) };
     if (E == nullptr)
@@ -179,9 +164,9 @@ T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::ptr(const std::string& Pat
     return E;
 }
 
-template <typename WrappedElement, bool TypeCheckingEnabled>
+template <typename WrappedElement>
 template <typename T>
-T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::FindInMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error)
+T* CapiAccessor<WrappedElement>::FindInMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error)
 {
     auto Result { FindInStaticMMI<T>(MMI, PathAndName, Error) };
 
@@ -194,9 +179,9 @@ T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::FindInMMI(rtwCAPI_ModelMap
     return Result;
 }
 
-template <typename WrappedElement, bool TypeCheckingEnabled>
+template <typename WrappedElement>
 template <typename T>
-T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error)
+T* CapiAccessor<WrappedElement>::FindInStaticMMI(rtwCAPI_ModelMappingInfo& MMI, const std::string& PathAndName, CapiError& Error)
 {
     const auto NumElements { db::simulink::GetCount<WrappedElement>(MMI) };
     const auto Data { db::simulink::GetRawData<WrappedElement>(MMI) };
@@ -216,22 +201,6 @@ T* CapiAccessor<WrappedElement, TypeCheckingEnabled>::FindInStaticMMI(rtwCAPI_Mo
     // Some getters do unfortunately depend on the index.  As a temporary workaround,
     // this index is calculated through pointer arithmetic.
     const auto Offset { static_cast<std::size_t>(Result - Data) };
-
-#ifdef ENABLE_RUNTIME_TYPE_CHECKING
-    if constexpr (TypeCheckingEnabled)
-    {
-        std::size_t DataTypeIndex { db::simulink::GetDataTypeIdx(Data, Offset) };
-        auto DataTypeMap { db::simulink::GetRawData<rtwCAPI_DataTypeMap>(MMI) };
-        std::string ActualType { db::simulink::GetTypeName<T>(DataTypeMap, DataTypeIndex) };
-        std::string DeducedType { cleantype::clean<std::remove_reference_t<T>>() };
-
-        if (ActualType != DeducedType)
-        {
-            Error = CapiError::TypeMismatch;
-            return nullptr;
-        }
-    }
-#endif
 
     Error = CapiError::None;
     const std::size_t AddrIndex { db::simulink::GetAddrIdx(Data, Offset) };

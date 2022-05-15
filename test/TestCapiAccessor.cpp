@@ -47,10 +47,10 @@ protected:
     }
 };
 
-using BlockParameters = db::simulink::BlockParameters<>;
-using ModelParameters = db::simulink::ModelParameters<>;
-using States = db::simulink::States<>;
-using Signals = db::simulink::Signals<>;
+using BlockParameters = db::simulink::BlockParameters;
+using ModelParameters = db::simulink::ModelParameters;
+using States = db::simulink::States;
+using Signals = db::simulink::Signals;
 
 /// Verify the internal GetAddrMapIndex Function against some
 /// magic numbers.
